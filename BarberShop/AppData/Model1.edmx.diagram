@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="430a9c3f5e2d4e2f984b93067bb7cc37" Name="Diagram1" ZoomLevel="64">
+        <EntityTypeShape EntityType="BarbershopDBModel.Appointments" Width="1.5" PointX="7.5" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.AppointmentStatuses" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Clients" Width="1.5" PointX="5.25" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Employees" Width="1.5" PointX="5.25" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Payments" Width="1.5" PointX="9.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.ProductCategories" Width="1.5" PointX="6" PointY="15.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Products" Width="1.5" PointX="8.25" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.ProductSales" Width="1.5" PointX="10.5" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Roles" Width="1.5" PointX="0.75" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Schedules" Width="1.5" PointX="7.5" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.ServiceCategories" Width="1.5" PointX="3" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Services" Width="1.5" PointX="5.25" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Suppliers" Width="1.5" PointX="8.25" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Supplies" Width="1.5" PointX="10.5" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BarbershopDBModel.Users" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Appointme__Clien__6B24EA82" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Appointme__Emplo__6C190EBB" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Appointme__Servi__6D0D32F4" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Appointme__Statu__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Payments__Appoin__72C60C4A" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Clients__UserID__5DCAEF64" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__ProductSa__Clien__07C12930" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Employees__UserI__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__ProductSa__Emplo__08B54D69" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Schedules__Emplo__66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Products__Catego__7A672E12" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__ProductSa__Produ__0A9D95DB" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Supplies__Produc__02FC7413" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Users__RoleID__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Services__Catego__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="BarbershopDBModel.FK__Supplies__Suppli__01142BA1" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
