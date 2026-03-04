@@ -116,31 +116,26 @@ namespace BarberShop.Pages
                 Button button = sender as Button;
                 string pageTag = button.Tag.ToString();
 
-                string message = "";
-
                 if (pageTag == "Appointments")
                 {
-                    message = "Переход на страницу записей клиентов";
+                    MessageBox.Show("Переход на страницу записей клиентов (в разработке)", "Информация",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else if (pageTag == "Clients")
                 {
-                    message = "Переход на страницу клиентов";
+                    // Переходим на страницу управления клиентами
+                    AppFrame.frame.Navigate(new ClientsManagementPage());
                 }
                 else if (pageTag == "Masters")
                 {
-                    message = "Переход на страницу мастеров";
+                    MessageBox.Show("Переход на страницу мастеров (в разработке)", "Информация",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else if (pageTag == "Reports")
                 {
-                    message = "Переход на страницу отчетов";
+                    MessageBox.Show("Переход на страницу отчетов (в разработке)", "Информация",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                else
-                {
-                    message = "Переход на страницу";
-                }
-
-                MessageBox.Show($"{message} (в разработке)", "Информация",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -148,7 +143,6 @@ namespace BarberShop.Pages
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         // Обработчик кнопки "Изменить данные"
         private void EditDataButton_Click(object sender, RoutedEventArgs e)
         {
