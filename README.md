@@ -8,15 +8,15 @@ BarberShop — десктопное приложение для управлен
 
 ---
 
-🛠 Технологии
+🛠Технологии
 
 Проект построен с использованием:
 
-💻 C# (.NET Framework)
-📊 WPF (Windows Presentation Foundation)
-🛠 Visual Studio (IDE)
-📦 MVVM-паттерн для организации кода
-💾 Подключение к базе данных SQL
+* 💻 C# (.NET Framework)
+* 📊 WPF (Windows Presentation Foundation)
+* 🛠 Visual Studio (IDE)
+* 📦 MVVM-паттерн для организации кода
+* 💾 Подключение к базе данных SQL
 
 ---
 
