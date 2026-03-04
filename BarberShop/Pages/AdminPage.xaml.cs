@@ -118,8 +118,8 @@ namespace BarberShop.Pages
 
                 if (pageTag == "Appointments")
                 {
-                    MessageBox.Show("Переход на страницу записей клиентов (в разработке)", "Информация",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Переходим на страницу управления записями
+                    AppFrame.frame.Navigate(new AppointmentsManagementPage());
                 }
                 else if (pageTag == "Clients")
                 {
