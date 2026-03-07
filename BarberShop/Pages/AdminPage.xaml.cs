@@ -128,8 +128,8 @@ namespace BarberShop.Pages
                 }
                 else if (pageTag == "Masters")
                 {
-                    MessageBox.Show("Переход на страницу мастеров (в разработке)", "Информация",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Переходим на страницу управления мастерами
+                    AppFrame.frame.Navigate(new MastersManagementPage());
                 }
                 else if (pageTag == "Reports")
                 {
