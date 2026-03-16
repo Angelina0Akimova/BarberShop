@@ -310,14 +310,39 @@
                                       Text="-" 
                                       Style="{StaticResource InfoValueStyle}"/>
 
-                            <!-- Левая колонка: Пароль (скрыт) -->
+                            <!-- Левая колонка: Пароль (с возможностью просмотра) -->
                             <TextBlock Grid.Row="4" Grid.Column="0" 
-                                      Text="Пароль:" 
-                                      Style="{StaticResource InfoLabelStyle}"/>
-                            <TextBlock Grid.Row="4" Grid.Column="1" 
-                                      x:Name="PasswordText" 
-                                      Text="••••••••" 
-                                      Style="{StaticResource InfoValueStyle}"/>
+          Text="Пароль:" 
+          Style="{StaticResource InfoLabelStyle}"/>
+                            <Grid Grid.Row="4" Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" 
+              x:Name="PasswordText" 
+              Text="••••••••" 
+              Style="{StaticResource InfoValueStyle}"
+              Margin="0 0 10 0"/>
+
+                                <Button Grid.Column="1" 
+            x:Name="ShowPasswordButton"
+            Width="30"
+            Height="30"
+            Background="Transparent"
+            BorderBrush="#CE7802"
+            BorderThickness="1"
+            Foreground="#CE7802"
+            FontSize="14"
+            Cursor="Hand"
+            Click="ShowPasswordButton_Click"
+            ToolTip="Показать/скрыть пароль">
+                                    <TextBlock x:Name="ShowPasswordButtonText" Text="👁️"/>
+                                </Button>
+                            </Grid>
+                            <!-- Скрытое поле для хранения фактического пароля -->
+                            <TextBlock x:Name="ActualPasswordText" Visibility="Collapsed"/>
 
                             <!-- Правая колонка: Дата регистрации -->
                             <TextBlock Grid.Row="0" Grid.Column="2" 

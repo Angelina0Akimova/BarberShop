@@ -15,7 +15,7 @@
         <Style x:Key="ContrastComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Background" Value="#FF1E1E1E"/>
             <Setter Property="BorderBrush" Value="#FF333333"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="0 0 0 15"/>
             
@@ -64,7 +64,7 @@
         <!-- Стиль для DatePicker (черный фон, белый текст) -->
         <Style x:Key="ContrastDatePickerStyle" TargetType="DatePicker">
             <Setter Property="Background" Value="#FF1E1E1E"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="BorderBrush" Value="#FF333333"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="0 0 0 15"/>

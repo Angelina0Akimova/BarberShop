@@ -177,7 +177,7 @@ namespace BarberShop.Pages
                     ServiceID = serviceId,
                     StatusID = statusId,
                     AppointmentDate = appointmentDate,
-                    StartTime = time,
+                    StartTime = time, // ИСПРАВЛЕНИЕ: присваиваем TimeSpan напрямую
                     CreatedAt = DateTime.Now
                 };
 

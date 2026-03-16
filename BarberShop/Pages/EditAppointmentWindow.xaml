@@ -10,6 +10,68 @@
         AllowsTransparency="True"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
+    <Window.Resources>
+        <!-- Стиль для ComboBox чтобы текст в выпадающем списке был черным на белом фоне -->
+        <Style x:Key="ContrastComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="#FF1E1E1E"/>
+            <Setter Property="BorderBrush" Value="#FF333333"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="0 0 0 15"/>
+
+            <!-- Стиль для выпадающего списка -->
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="BorderBrush" Value="#FFCCCCCC"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#CE7802"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFE5E5E5"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Стиль для выпадающего списка -->
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel Background="White"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для TextBox (черный фон, белый текст) -->
+        <Style x:Key="ContrastTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#FF1E1E1E"/>
+            <Setter Property="BorderBrush" Value="#FF333333"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10 5"/>
+            <Setter Property="Margin" Value="0 0 0 15"/>
+        </Style>
+
+        <!-- Стиль для DatePicker (черный фон, белый текст) -->
+        <Style x:Key="ContrastDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="Background" Value="#FF1E1E1E"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#FF333333"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="0 0 0 15"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
+
     <Border CornerRadius="15" Background="#FF141414" BorderBrush="#CE7802" BorderThickness="1">
         <Grid Margin="20">
             <Grid.RowDefinitions>
@@ -47,44 +109,75 @@
                         Click="CloseButton_Click"/>
             </Grid>
 
-            <!-- Форма (аналогично окну добавления) -->
+            <!-- Форма -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock Text="Клиент *" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <ComboBox x:Name="ClientComboBox" Height="40" Background="#FF1E1E1E" 
-                              BorderBrush="#FF333333" Foreground="White" DisplayMemberPath="FullName" 
-                              SelectedValuePath="Id" Margin="0 0 0 15"/>
+                    <!-- Клиент -->
+                    <TextBlock Text="Клиент *" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <ComboBox x:Name="ClientComboBox"
+                              Style="{StaticResource ContrastComboBoxStyle}"
+                              DisplayMemberPath="FullName"
+                              SelectedValuePath="ClientID"/>
 
-                    <TextBlock Text="Мастер *" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <ComboBox x:Name="EmployeeComboBox" Height="40" Background="#FF1E1E1E" 
-                              BorderBrush="#FF333333" Foreground="White" DisplayMemberPath="FullName" 
-                              SelectedValuePath="Id" Margin="0 0 0 15"/>
+                    <!-- Мастер -->
+                    <TextBlock Text="Мастер *" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <ComboBox x:Name="EmployeeComboBox"
+                              Style="{StaticResource ContrastComboBoxStyle}"
+                              DisplayMemberPath="FullName"
+                              SelectedValuePath="EmployeeID"/>
 
-                    <TextBlock Text="Услуга *" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <ComboBox x:Name="ServiceComboBox" Height="40" Background="#FF1E1E1E" 
-                              BorderBrush="#FF333333" Foreground="White" DisplayMemberPath="Name" 
-                              SelectedValuePath="Id" SelectionChanged="ServiceComboBox_SelectionChanged" 
-                              Margin="0 0 0 15"/>
+                    <!-- Услуга -->
+                    <TextBlock Text="Услуга *" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <ComboBox x:Name="ServiceComboBox"
+                              Style="{StaticResource ContrastComboBoxStyle}"
+                              DisplayMemberPath="ServiceName"
+                              SelectedValuePath="ServiceID"
+                              SelectionChanged="ServiceComboBox_SelectionChanged"/>
 
-                    <TextBlock Text="Стоимость" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <TextBox x:Name="PriceTextBox" Height="40" Background="#FF1E1E1E" 
-                             BorderBrush="#FF333333" Foreground="White" FontSize="14" 
-                             Padding="10 5" IsReadOnly="True" Margin="0 0 0 15"/>
+                    <!-- Стоимость -->
+                    <TextBlock Text="Стоимость" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <TextBox x:Name="PriceTextBox"
+                             Style="{StaticResource ContrastTextBoxStyle}"
+                             IsReadOnly="True"/>
 
-                    <TextBlock Text="Дата *" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <DatePicker x:Name="AppointmentDatePicker" Background="#FF1E1E1E" 
-                                Foreground="White" BorderBrush="#FF333333" Height="40" 
-                                Margin="0 0 0 15"/>
+                    <!-- Дата -->
+                    <TextBlock Text="Дата *" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <DatePicker x:Name="AppointmentDatePicker"
+                                Style="{StaticResource ContrastDatePickerStyle}"/>
 
-                    <TextBlock Text="Время *" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <TextBox x:Name="TimeTextBox" Height="40" Background="#FF1E1E1E" 
-                             BorderBrush="#FF333333" Foreground="White" FontSize="14" 
-                             Padding="10 5" Margin="0 0 0 15"/>
+                    <!-- Время -->
+                    <TextBlock Text="Время *" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <TextBox x:Name="TimeTextBox"
+                             Style="{StaticResource ContrastTextBoxStyle}"
+                             Text="10:00"/>
 
-                    <TextBlock Text="Статус *" Foreground="#CCCCCC" Margin="5 0 5 5" FontSize="14"/>
-                    <ComboBox x:Name="StatusComboBox" Height="40" Background="#FF1E1E1E" 
-                              BorderBrush="#FF333333" Foreground="White" DisplayMemberPath="Name" 
-                              SelectedValuePath="Id" Margin="0 0 0 15"/>
+                    <!-- Статус -->
+                    <TextBlock Text="Статус *" 
+                               Foreground="#CCCCCC" 
+                               Margin="5 0 5 5" 
+                               FontSize="14"/>
+                    <ComboBox x:Name="StatusComboBox"
+                              Style="{StaticResource ContrastComboBoxStyle}"
+                              DisplayMemberPath="StatusName"
+                              SelectedValuePath="StatusID"/>
                 </StackPanel>
             </ScrollViewer>
 
@@ -95,15 +188,32 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" x:Name="CancelButton" Content="Отмена" Height="45"
-                        Background="Transparent" BorderBrush="#FF333333" BorderThickness="2"
-                        Foreground="#CCCCCC" FontSize="16" FontWeight="Bold" Cursor="Hand"
-                        Margin="0 0 5 0" Click="CancelButton_Click"/>
+                <Button Grid.Column="0" 
+                        x:Name="CancelButton"
+                        Content="Отмена"
+                        Height="45"
+                        Background="Transparent"
+                        BorderBrush="#FF333333"
+                        BorderThickness="2"
+                        Foreground="#CCCCCC"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Cursor="Hand"
+                        Margin="0 0 5 0"
+                        Click="CancelButton_Click"/>
 
-                <Button Grid.Column="1" x:Name="SaveButton" Content="Сохранить" Height="45"
-                        Background="#CE7802" BorderThickness="0" Foreground="White"
-                        FontSize="16" FontWeight="Bold" Cursor="Hand"
-                        Margin="5 0 0 0" Click="SaveButton_Click"/>
+                <Button Grid.Column="1" 
+                        x:Name="SaveButton"
+                        Content="Сохранить"
+                        Height="45"
+                        Background="#CE7802"
+                        BorderThickness="0"
+                        Foreground="White"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Cursor="Hand"
+                        Margin="5 0 0 0"
+                        Click="SaveButton_Click"/>
             </Grid>
         </Grid>
     </Border>

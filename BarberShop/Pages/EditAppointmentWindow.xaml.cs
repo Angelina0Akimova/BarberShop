@@ -9,13 +9,13 @@ namespace BarberShop.Pages
 {
     public partial class EditAppointmentWindow : Window
     {
-        private int appointmentId;
-        private Appointments currentAppointment;
+        private int _appointmentId;
+        private Appointments _currentAppointment;
 
         public EditAppointmentWindow(int appointmentId)
         {
             InitializeComponent();
-            this.appointmentId = appointmentId;
+            _appointmentId = appointmentId;
             LoadData();
             LoadAppointment();
         }
@@ -31,27 +31,47 @@ namespace BarberShop.Pages
             try
             {
                 // Загружаем клиентов
-                var clients = from client in AppConnect.modelBd.Clients
-                              join user in AppConnect.modelBd.Users on client.UserID equals user.UserID
-                              select new
-                              {
-                                  ClientID = client.ClientID,
-                                  FullName = $"{user.LastName} {user.FirstName}"
-                              };
-                ClientComboBox.ItemsSource = clients.ToList();
+                var clientsQuery = from client in AppConnect.modelBd.Clients
+                                   join user in AppConnect.modelBd.Users on client.UserID equals user.UserID
+                                   select new
+                                   {
+                                       client.ClientID,
+                                       user.LastName,
+                                       user.FirstName
+                                   };
+
+                var clients = clientsQuery.ToList()
+                    .Select(x => new
+                    {
+                        ClientID = x.ClientID,
+                        FullName = $"{x.LastName} {x.FirstName}"
+                    })
+                    .ToList();
+
+                ClientComboBox.ItemsSource = clients;
                 ClientComboBox.DisplayMemberPath = "FullName";
                 ClientComboBox.SelectedValuePath = "ClientID";
 
                 // Загружаем мастеров
-                var employees = from emp in AppConnect.modelBd.Employees
-                                join user in AppConnect.modelBd.Users on emp.UserID equals user.UserID
-                                where user.RoleID == 2
-                                select new
-                                {
-                                    EmployeeID = emp.EmployeeID,
-                                    FullName = $"{user.LastName} {user.FirstName}"
-                                };
-                EmployeeComboBox.ItemsSource = employees.ToList();
+                var employeesQuery = from emp in AppConnect.modelBd.Employees
+                                     join user in AppConnect.modelBd.Users on emp.UserID equals user.UserID
+                                     where user.RoleID == 2
+                                     select new
+                                     {
+                                         emp.EmployeeID,
+                                         user.LastName,
+                                         user.FirstName
+                                     };
+
+                var employees = employeesQuery.ToList()
+                    .Select(x => new
+                    {
+                        EmployeeID = x.EmployeeID,
+                        FullName = $"{x.LastName} {x.FirstName}"
+                    })
+                    .ToList();
+
+                EmployeeComboBox.ItemsSource = employees;
                 EmployeeComboBox.DisplayMemberPath = "FullName";
                 EmployeeComboBox.SelectedValuePath = "EmployeeID";
 
@@ -84,47 +104,25 @@ namespace BarberShop.Pages
         {
             try
             {
-                currentAppointment = AppConnect.modelBd.Appointments
-                    .FirstOrDefault(a => a.AppointmentID == appointmentId);
+                _currentAppointment = AppConnect.modelBd.Appointments
+                    .FirstOrDefault(a => a.AppointmentID == _appointmentId);
 
-                if (currentAppointment != null)
+                if (_currentAppointment != null)
                 {
-                    ClientComboBox.SelectedValue = currentAppointment.ClientID;
-                    EmployeeComboBox.SelectedValue = currentAppointment.EmployeeID;
-                    ServiceComboBox.SelectedValue = currentAppointment.ServiceID;
-                    AppointmentDatePicker.SelectedDate = currentAppointment.AppointmentDate;
+                    ClientComboBox.SelectedValue = _currentAppointment.ClientID;
+                    EmployeeComboBox.SelectedValue = _currentAppointment.EmployeeID;
+                    ServiceComboBox.SelectedValue = _currentAppointment.ServiceID;
+                    AppointmentDatePicker.SelectedDate = _currentAppointment.AppointmentDate;
 
-                    // Безопасное получение времени (исправление CS0183)
-                    string timeText = "10:00";
-                    try
-                    {
-                        var timeProperty = currentAppointment.GetType().GetProperty("StartTime");
-                        if (timeProperty != null)
-                        {
-                            var timeValue = timeProperty.GetValue(currentAppointment);
+                    // ИСПРАВЛЕНИЕ: StartTime - это TimeSpan, не nullable
+                    // Просто форматируем TimeSpan в строку
+                    TimeTextBox.Text = _currentAppointment.StartTime.ToString(@"hh\:mm");
 
-                            // Используем pattern matching (не вызывает предупреждение CS0183)
-                            if (timeValue is TimeSpan timeSpan)
-                                timeText = timeSpan.ToString(@"hh\:mm");
-                            else if (timeValue is TimeSpan?)
-                            {
-                                var nullableTime = (TimeSpan?)timeValue;
-                                if (nullableTime.HasValue)
-                                    timeText = nullableTime.Value.ToString(@"hh\:mm");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Ошибка получения времени: {ex.Message}");
-                    }
-
-                    TimeTextBox.Text = timeText;
-                    StatusComboBox.SelectedValue = currentAppointment.StatusID;
+                    StatusComboBox.SelectedValue = _currentAppointment.StatusID;
 
                     // Загружаем цену услуги
                     var service = AppConnect.modelBd.Services
-                        .FirstOrDefault(s => s.ServiceID == currentAppointment.ServiceID);
+                        .FirstOrDefault(s => s.ServiceID == _currentAppointment.ServiceID);
                     if (service != null)
                     {
                         PriceTextBox.Text = $"{service.Price:0.00} ₽";
@@ -144,6 +142,7 @@ namespace BarberShop.Pages
             {
                 if (ServiceComboBox.SelectedItem != null)
                 {
+                    // Получаем цену выбранной услуги
                     dynamic selectedService = ServiceComboBox.SelectedItem;
                     PriceTextBox.Text = $"{selectedService.Price} ₽";
                 }
@@ -172,9 +171,12 @@ namespace BarberShop.Pages
             try
             {
                 // Валидация
-                if (ClientComboBox.SelectedItem == null || EmployeeComboBox.SelectedItem == null ||
-                    ServiceComboBox.SelectedItem == null || AppointmentDatePicker.SelectedDate == null ||
-                    string.IsNullOrWhiteSpace(TimeTextBox.Text) || StatusComboBox.SelectedItem == null)
+                if (ClientComboBox.SelectedItem == null ||
+                    EmployeeComboBox.SelectedItem == null ||
+                    ServiceComboBox.SelectedItem == null ||
+                    AppointmentDatePicker.SelectedDate == null ||
+                    string.IsNullOrWhiteSpace(TimeTextBox.Text) ||
+                    StatusComboBox.SelectedItem == null)
                 {
                     MessageBox.Show("Пожалуйста, заполните все поля", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -188,17 +190,23 @@ namespace BarberShop.Pages
                     return;
                 }
 
-                if (currentAppointment != null)
+                if (_currentAppointment != null)
                 {
-                    currentAppointment.ClientID = (int)ClientComboBox.SelectedValue;
-                    currentAppointment.EmployeeID = (int)EmployeeComboBox.SelectedValue;
-                    currentAppointment.ServiceID = (int)ServiceComboBox.SelectedValue;
-                    currentAppointment.AppointmentDate = AppointmentDatePicker.SelectedDate.Value;
-                    currentAppointment.StartTime = time;
-                    currentAppointment.StatusID = (int)StatusComboBox.SelectedValue;
+                    _currentAppointment.ClientID = (int)ClientComboBox.SelectedValue;
+                    _currentAppointment.EmployeeID = (int)EmployeeComboBox.SelectedValue;
+                    _currentAppointment.ServiceID = (int)ServiceComboBox.SelectedValue;
+                    _currentAppointment.AppointmentDate = AppointmentDatePicker.SelectedDate.Value;
+
+                    // ИСПРАВЛЕНИЕ: StartTime - это TimeSpan, присваиваем напрямую
+                    _currentAppointment.StartTime = time;
+
+                    _currentAppointment.StatusID = (int)StatusComboBox.SelectedValue;
 
                     AppConnect.modelBd.SaveChanges();
                 }
+
+                MessageBox.Show("Запись успешно обновлена!", "Успех",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
 
                 this.DialogResult = true;
                 this.Close();

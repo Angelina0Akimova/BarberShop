@@ -91,12 +91,14 @@ namespace BarberShop.Pages
                                        Status = st
                                    };
 
+                var appointmentsList = appointments.ToList();
+
                 var today = DateTime.Today;
                 var todayAppointments = new List<AppointmentDisplay>();
                 var upcomingAppointments = new List<AppointmentDisplay>();
                 var pastAppointments = new List<AppointmentDisplay>();
 
-                foreach (var item in appointments)
+                foreach (var item in appointmentsList)
                 {
                     // Определяем цвет статуса
                     SolidColorBrush statusColor;
@@ -119,26 +121,8 @@ namespace BarberShop.Pages
                             break;
                     }
 
-                    // Проверяем через рефлексию, является ли свойство nullable
-                    DateTime appointmentDateTime;
-                    var startTimeProperty = item.Appointment.GetType().GetProperty("StartTime");
-                    if (startTimeProperty != null && Nullable.GetUnderlyingType(startTimeProperty.PropertyType) != null)
-                    {
-                        // Свойство nullable
-                        var startTimeValue = startTimeProperty.GetValue(item.Appointment) as TimeSpan?;
-                        appointmentDateTime = item.Appointment.AppointmentDate.Date
-                            .Add(startTimeValue ?? TimeSpan.Zero);
-                    }
-                    else if (startTimeProperty != null)
-                    {
-                        // Свойство не nullable
-                        var startTimeValue = (TimeSpan)startTimeProperty.GetValue(item.Appointment);
-                        appointmentDateTime = item.Appointment.AppointmentDate.Date.Add(startTimeValue);
-                    }
-                    else
-                    {
-                        appointmentDateTime = item.Appointment.AppointmentDate.Date;
-                    }
+                    // Формируем дату и время записи
+                    DateTime appointmentDateTime = item.Appointment.AppointmentDate.Date.Add(item.Appointment.StartTime);
 
                     var displayItem = new AppointmentDisplay
                     {
@@ -149,7 +133,7 @@ namespace BarberShop.Pages
                         ServicePrice = item.Service.Price,
                         EmployeeName = $"{item.EmployeeUser.LastName} {item.EmployeeUser.FirstName}",
                         Date = item.Appointment.AppointmentDate.ToString("dd.MM.yyyy"),
-                        Time = (item.Appointment.StartTime as TimeSpan?)?.ToString(@"hh\:mm") ?? "Не указано",
+                        Time = item.Appointment.StartTime.ToString(@"hh\:mm"),
                         Price = $"{item.Service.Price:0.00} ₽",
                         StatusText = item.Status.StatusName,
                         StatusColor = statusColor,
@@ -185,6 +169,9 @@ namespace BarberShop.Pages
                 NoTodayAppointmentsText.Visibility = todayAppointments.Any() ? Visibility.Collapsed : Visibility.Visible;
                 NoUpcomingAppointmentsText.Visibility = upcomingAppointments.Any() ? Visibility.Collapsed : Visibility.Visible;
                 NoPastAppointmentsText.Visibility = pastAppointments.Any() ? Visibility.Collapsed : Visibility.Visible;
+
+                // Отладка
+                System.Diagnostics.Debug.WriteLine($"Загружено записей: всего {appointmentsList.Count}, сегодня {todayAppointments.Count}, предстоит {upcomingAppointments.Count}, прошло {pastAppointments.Count}");
             }
             catch (Exception ex)
             {
@@ -222,6 +209,7 @@ namespace BarberShop.Pages
                 if (button?.Tag != null)
                 {
                     int appointmentId = (int)button.Tag;
+                    System.Diagnostics.Debug.WriteLine($"Редактирование записи с ID: {appointmentId}");
 
                     var editWindow = new EditAppointmentWindow(appointmentId);
                     editWindow.Owner = Window.GetWindow(this);
@@ -229,9 +217,13 @@ namespace BarberShop.Pages
                     if (editWindow.ShowDialog() == true)
                     {
                         LoadAppointments();
-                        MessageBox.Show("Запись успешно обновлена!", "Успех",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
                     }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Tag кнопки редактирования равен null");
+                    MessageBox.Show("Не удалось определить ID записи", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)
@@ -249,9 +241,12 @@ namespace BarberShop.Pages
                 if (button?.Tag != null)
                 {
                     int appointmentId = (int)button.Tag;
+                    System.Diagnostics.Debug.WriteLine($"Удаление записи с ID: {appointmentId}");
 
                     var result = MessageBox.Show("Вы уверены, что хотите удалить эту запись?",
-                        "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        "Подтверждение удаления",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
 
                     if (result == MessageBoxResult.Yes)
                     {
@@ -263,11 +258,24 @@ namespace BarberShop.Pages
                             AppConnect.modelBd.Appointments.Remove(appointment);
                             AppConnect.modelBd.SaveChanges();
 
+                            // Перезагружаем список записей
                             LoadAppointments();
+
                             MessageBox.Show("Запись успешно удалена!", "Успех",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
                         }
+                        else
+                        {
+                            MessageBox.Show("Запись не найдена в базе данных", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
                     }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Tag кнопки удаления равен null");
+                    MessageBox.Show("Не удалось определить ID записи", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)

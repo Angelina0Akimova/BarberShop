@@ -72,12 +72,25 @@ namespace BarberShop.Pages
                 LoginText.Text = string.IsNullOrEmpty(currentAdmin.Email) ?
                     "Email не указан" : currentAdmin.Email;
 
+                // Сохраняем фактический пароль для возможности просмотра
+                // (В реальном проекте лучше не хранить пароль в открытом виде,
+                // а показывать его только при необходимости, запрашивая из БД)
+                if (ActualPasswordText != null)
+                {
+                    ActualPasswordText.Text = currentAdmin.PasswordHash;
+                }
+
                 // Дата регистрации - RegistrationDate не nullable в вашей БД
-                // Форматируем дату напрямую, без проверки HasValue
                 RegistrationDateText.Text = currentAdmin.RegistrationDate.ToString("dd.MM.yyyy");
 
                 // Статус (всегда активен для текущего пользователя)
                 StatusText.Text = "Активен";
+
+                // Сбрасываем состояние отображения пароля
+                _isPasswordVisible = false;
+                PasswordText.Text = "••••••••";
+                if (ShowPasswordButtonText != null)
+                    ShowPasswordButtonText.Text = "👁️";
             }
             catch (Exception ex)
             {
@@ -144,12 +157,22 @@ namespace BarberShop.Pages
             }
         }
         // Обработчик кнопки "Изменить данные"
+        // Обработчик кнопки "Изменить данные"
         private void EditDataButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                MessageBox.Show("Функция редактирования данных будет доступна в следующей версии",
-                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                var editWindow = new EditAdminDataWindow();
+                editWindow.Owner = Window.GetWindow(this);
+
+                if (editWindow.ShowDialog() == true)
+                {
+                    // Перезагружаем данные администратора
+                    LoadAdminData();
+
+                    MessageBox.Show("Данные успешно обновлены!", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -163,8 +186,14 @@ namespace BarberShop.Pages
         {
             try
             {
-                MessageBox.Show("Функция смены пароля будет доступна в следующей версии",
-                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                var changePasswordWindow = new ChangeAdminPasswordWindow();
+                changePasswordWindow.Owner = Window.GetWindow(this);
+
+                if (changePasswordWindow.ShowDialog() == true)
+                {
+                    MessageBox.Show("Пароль успешно изменен!", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -173,6 +202,34 @@ namespace BarberShop.Pages
             }
         }
 
+        // Обработчик кнопки показа/скрытия пароля
+        private bool _isPasswordVisible = false;
+
+        private void ShowPasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!_isPasswordVisible)
+                {
+                    // Показываем пароль
+                    PasswordText.Text = currentAdmin.PasswordHash;
+                    ShowPasswordButtonText.Text = "🔒";
+                    _isPasswordVisible = true;
+                }
+                else
+                {
+                    // Скрываем пароль
+                    PasswordText.Text = "••••••••";
+                    ShowPasswordButtonText.Text = "👁️";
+                    _isPasswordVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         // Обработчик кнопки выхода
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
