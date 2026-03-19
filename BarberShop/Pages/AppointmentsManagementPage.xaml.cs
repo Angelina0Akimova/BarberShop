@@ -25,6 +25,7 @@ namespace BarberShop.Pages
             public string StatusText { get; set; }
             public SolidColorBrush StatusColor { get; set; }
             public DateTime AppointmentDateTime { get; set; }
+            public int StatusId { get; set; } // Добавляем ID статуса для проверки
         }
 
         public AppointmentsManagementPage()
@@ -53,6 +54,9 @@ namespace BarberShop.Pages
                 // Отображаем информацию об администраторе
                 AdminInfoText.Text = $"Администратор: {AppConnect.currentUser.LastName} {AppConnect.currentUser.FirstName}";
 
+                // Обновляем статусы прошедших записей
+                UpdatePastAppointmentsStatus();
+
                 // Загружаем записи
                 LoadAppointments();
             }
@@ -60,6 +64,48 @@ namespace BarberShop.Pages
             {
                 MessageBox.Show($"Ошибка загрузки страницы: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Обновляет статусы прошедших записей с "Запланировано" на "Выполнено"
+        /// </summary>
+        private void UpdatePastAppointmentsStatus()
+        {
+            try
+            {
+                var currentDateTime = DateTime.Now;
+                var scheduledStatusId = 1; // ID статуса "Запланировано"
+                var completedStatusId = 2; // ID статуса "Выполнено"
+
+                // Находим все запланированные записи
+                var pastScheduledAppointments = AppConnect.modelBd.Appointments
+                    .Where(a => a.StatusID == scheduledStatusId)
+                    .ToList() // Загружаем в память для дальнейших вычислений
+                    .Where(a => {
+                        // Создаем DateTime окончания записи: дата + время окончания
+                        DateTime endDateTime = a.AppointmentDate.Date.Add(a.EndTime);
+                        // Сравниваем с текущим временем
+                        return endDateTime < currentDateTime;
+                    })
+                    .ToList();
+
+                if (pastScheduledAppointments.Any())
+                {
+                    foreach (var appointment in pastScheduledAppointments)
+                    {
+                        appointment.StatusID = completedStatusId;
+                    }
+
+                    AppConnect.modelBd.SaveChanges();
+
+                    System.Diagnostics.Debug.WriteLine($"Обновлено статусов: {pastScheduledAppointments.Count}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка при обновлении статусов: {ex.Message}");
+                // Не показываем сообщение пользователю, чтобы не прерывать загрузку страницы
             }
         }
 
@@ -101,28 +147,10 @@ namespace BarberShop.Pages
                 foreach (var item in appointmentsList)
                 {
                     // Определяем цвет статуса
-                    SolidColorBrush statusColor;
-                    switch (item.Status.StatusID)
-                    {
-                        case 1: // Запланировано
-                            statusColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50"));
-                            break;
-                        case 2: // Выполнено
-                            statusColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFA500"));
-                            break;
-                        case 3: // Отменено
-                            statusColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF4444"));
-                            break;
-                        case 4: // Не пришел
-                            statusColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666666"));
-                            break;
-                        default:
-                            statusColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666666"));
-                            break;
-                    }
+                    SolidColorBrush statusColor = GetStatusColor(item.Status.StatusID);
 
-                    // Формируем дату и время записи
-                    DateTime appointmentDateTime = item.Appointment.AppointmentDate.Date.Add(item.Appointment.StartTime);
+                    // Формируем дату и время окончания записи
+                    DateTime appointmentEndDateTime = item.Appointment.AppointmentDate.Date.Add(item.Appointment.EndTime);
 
                     var displayItem = new AppointmentDisplay
                     {
@@ -133,19 +161,20 @@ namespace BarberShop.Pages
                         ServicePrice = item.Service.Price,
                         EmployeeName = $"{item.EmployeeUser.LastName} {item.EmployeeUser.FirstName}",
                         Date = item.Appointment.AppointmentDate.ToString("dd.MM.yyyy"),
-                        Time = item.Appointment.StartTime.ToString(@"hh\:mm"),
+                        Time = $"{item.Appointment.StartTime.ToString(@"hh\:mm")} - {item.Appointment.EndTime.ToString(@"hh\:mm")}",
                         Price = $"{item.Service.Price:0.00} ₽",
                         StatusText = item.Status.StatusName,
                         StatusColor = statusColor,
-                        AppointmentDateTime = appointmentDateTime
+                        AppointmentDateTime = appointmentEndDateTime,
+                        StatusId = item.Status.StatusID
                     };
 
                     // Разделяем по категориям
-                    if (appointmentDateTime.Date == today)
+                    if (appointmentEndDateTime.Date == today)
                     {
                         todayAppointments.Add(displayItem);
                     }
-                    else if (appointmentDateTime.Date > today)
+                    else if (appointmentEndDateTime.Date > today)
                     {
                         upcomingAppointments.Add(displayItem);
                     }
@@ -177,6 +206,26 @@ namespace BarberShop.Pages
             {
                 MessageBox.Show($"Ошибка загрузки записей: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Возвращает цвет для статуса записи
+        /// </summary>
+        private SolidColorBrush GetStatusColor(int statusId)
+        {
+            switch (statusId)
+            {
+                case 1: // Запланировано
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50"));
+                case 2: // Выполнено
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFA500"));
+                case 3: // Отменено
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF4444"));
+                case 4: // Не пришел
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666666"));
+                default:
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666666"));
             }
         }
 
@@ -216,6 +265,8 @@ namespace BarberShop.Pages
 
                     if (editWindow.ShowDialog() == true)
                     {
+                        // После редактирования снова проверяем статусы
+                        UpdatePastAppointmentsStatus();
                         LoadAppointments();
                     }
                 }
@@ -255,6 +306,28 @@ namespace BarberShop.Pages
 
                         if (appointment != null)
                         {
+                            // Проверяем, есть ли связанные платежи
+                            var relatedPayments = AppConnect.modelBd.Payments
+                                .Where(p => p.AppointmentID == appointmentId).ToList();
+
+                            if (relatedPayments.Any())
+                            {
+                                var paymentResult = MessageBox.Show(
+                                    "У этой записи есть связанные платежи. При удалении записи платежи также будут удалены. Продолжить?",
+                                    "Подтверждение удаления",
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Warning);
+
+                                if (paymentResult == MessageBoxResult.Yes)
+                                {
+                                    AppConnect.modelBd.Payments.RemoveRange(relatedPayments);
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+
                             AppConnect.modelBd.Appointments.Remove(appointment);
                             AppConnect.modelBd.SaveChanges();
 

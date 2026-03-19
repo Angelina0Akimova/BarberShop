@@ -10,11 +10,17 @@ namespace BarberShop.Pages
 {
     public partial class AddAppointmentWindow : Window
     {
+        // Константа для длительности услуги (1 час = 60 минут)
+        private const int DEFAULT_DURATION_MINUTES = 60;
+
         public AddAppointmentWindow()
         {
             InitializeComponent();
             LoadData();
             AppointmentDatePicker.SelectedDate = DateTime.Today;
+
+            // Устанавливаем время по умолчанию
+            TimeTextBox.Text = DateTime.Now.ToString("HH:mm");
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -83,7 +89,8 @@ namespace BarberShop.Pages
                                {
                                    ServiceID = service.ServiceID,
                                    ServiceName = service.ServiceName,
-                                   Price = service.Price
+                                   Price = service.Price,
+                                   DurationMinutes = service.DurationMinutes
                                };
                 ServiceComboBox.ItemsSource = services.ToList();
                 ServiceComboBox.DisplayMemberPath = "ServiceName";
@@ -125,6 +132,41 @@ namespace BarberShop.Pages
             }
         }
 
+        /// <summary>
+        /// Вычисляет время окончания записи на основе времени начала и длительности
+        /// </summary>
+        private TimeSpan CalculateEndTime(TimeSpan startTime)
+        {
+            // Добавляем 1 час (60 минут) к времени начала
+            return startTime.Add(TimeSpan.FromMinutes(DEFAULT_DURATION_MINUTES));
+        }
+
+        /// <summary>
+        /// Проверяет, не пересекается ли новая запись с существующими
+        /// </summary>
+        private bool IsTimeSlotAvailable(int employeeId, DateTime date, TimeSpan startTime, TimeSpan endTime)
+        {
+            var existingAppointments = AppConnect.modelBd.Appointments
+                .Where(a => a.EmployeeID == employeeId
+                    && a.AppointmentDate == date
+                    && a.StatusID != 3) // Исключаем отмененные записи (StatusID = 3)
+                .ToList();
+
+            foreach (var appointment in existingAppointments)
+            {
+                TimeSpan existingStart = appointment.StartTime;
+                TimeSpan existingEnd = appointment.EndTime;
+
+                // Проверяем пересечение временных интервалов
+                if ((startTime < existingEnd) && (endTime > existingStart))
+                {
+                    return false; // Время занято
+                }
+            }
+
+            return true; // Время свободно
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
@@ -154,13 +196,16 @@ namespace BarberShop.Pages
                     return;
                 }
 
-                // Парсим время
-                if (!TimeSpan.TryParse(TimeTextBox.Text, out TimeSpan time))
+                // Парсим время начала
+                if (!TimeSpan.TryParse(TimeTextBox.Text, out TimeSpan startTime))
                 {
                     MessageBox.Show("Неверный формат времени. Используйте ЧЧ:ММ", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
+                // Вычисляем время окончания (начало + 1 час)
+                TimeSpan endTime = CalculateEndTime(startTime);
 
                 // Получаем выбранные значения
                 int clientId = (int)ClientComboBox.SelectedValue;
@@ -168,6 +213,14 @@ namespace BarberShop.Pages
                 int serviceId = (int)ServiceComboBox.SelectedValue;
                 int statusId = (int)StatusComboBox.SelectedValue;
                 DateTime appointmentDate = AppointmentDatePicker.SelectedDate.Value;
+
+                // Проверяем, не занято ли это время у мастера
+                if (!IsTimeSlotAvailable(employeeId, appointmentDate, startTime, endTime))
+                {
+                    MessageBox.Show($"Это время уже занято у выбранного мастера. Выберите другое время.",
+                        "Время занято", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
                 // Создаем новую запись
                 var appointment = new Appointments
@@ -177,15 +230,18 @@ namespace BarberShop.Pages
                     ServiceID = serviceId,
                     StatusID = statusId,
                     AppointmentDate = appointmentDate,
-                    StartTime = time, // ИСПРАВЛЕНИЕ: присваиваем TimeSpan напрямую
-                    CreatedAt = DateTime.Now
+                    StartTime = startTime,
+                    EndTime = endTime, // Устанавливаем время окончания (+1 час)
+                    CreatedAt = DateTime.Now,
+                    Comment = null // Можно добавить поле для комментария в интерфейсе при необходимости
                 };
 
                 AppConnect.modelBd.Appointments.Add(appointment);
                 AppConnect.modelBd.SaveChanges();
 
-                MessageBox.Show("Запись успешно добавлена!", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Запись успешно добавлена!\n" +
+                    $"Время: {startTime.ToString(@"hh\:mm")} - {endTime.ToString(@"hh\:mm")} (1 час)",
+                    "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 this.DialogResult = true;
                 this.Close();

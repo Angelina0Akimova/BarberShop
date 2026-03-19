@@ -146,8 +146,8 @@ namespace BarberShop.Pages
                 }
                 else if (pageTag == "Reports")
                 {
-                    MessageBox.Show("Переход на страницу отчетов (в разработке)", "Информация",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        AppFrame.frame.Navigate(new ReportsPage());
                 }
             }
             catch (Exception ex)
