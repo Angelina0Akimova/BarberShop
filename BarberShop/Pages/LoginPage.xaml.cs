@@ -68,7 +68,7 @@ namespace BarberShop.Pages
                         AppFrame.frame.Navigate(new AdminPage());
                         break;
                     case 2: // мастер
-                            // AppFrame.frame.Navigate(new MasterPage());
+                         AppFrame.frame.Navigate(new MasterPage());
                         break;
                     case 3: // клиент
                             

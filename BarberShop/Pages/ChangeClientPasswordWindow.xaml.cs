@@ -8,26 +8,32 @@ namespace BarberShop.Pages
 {
     public partial class ChangeClientPasswordWindow : Window
     {
-        private int userId;
-        private Users user;
+        private int _userId;
+        private Users _user;
 
-        public ChangeClientPasswordWindow(int userId)
+        /// <summary>
+        /// Конструктор окна смены пароля.
+        /// </summary>
+        /// <param name="userId">ID пользователя, чей пароль меняем.</param>
+        /// <param name="isClient">Флаг, указывающий, что это клиент (для текста приветствия).</param>
+        public ChangeClientPasswordWindow(int userId, bool isClient = true)
         {
             InitializeComponent();
-            this.userId = userId;
-            LoadUserData();
+            _userId = userId;
+            LoadUserData(isClient);
         }
 
-        private void LoadUserData()
+        private void LoadUserData(bool isClient)
         {
             try
             {
-                user = AppConnect.modelBd.Users.FirstOrDefault(u => u.UserID == userId);
-                if (user != null)
+                _user = AppConnect.modelBd.Users.FirstOrDefault(u => u.UserID == _userId);
+                if (_user != null)
                 {
-                    // Убираем MiddleName, так как его нет в таблице
-                    ClientInfoText.Text = $"Клиент: {user.LastName} {user.FirstName}";
-                    TitleText.Text = $"СМЕНА ПАРОЛЯ: {user.Email}"; // Используем Email как логин
+                    // Меняем текст в зависимости от того, кто меняет пароль (клиент или админ)
+                    string roleText = isClient ? "Клиент" : "Пользователь";
+                    ClientInfoText.Text = $"{roleText}: {_user.LastName} {_user.FirstName}";
+                    TitleText.Text = $"СМЕНА ПАРОЛЯ: {_user.Email ?? _user.Phone}";
                 }
             }
             catch (Exception ex)
@@ -59,8 +65,9 @@ namespace BarberShop.Pages
         {
             try
             {
-                // Валидация
-                if (string.IsNullOrWhiteSpace(NewPasswordBox.Password) ||
+                // 1. Валидация: все поля заполнены?
+                if (string.IsNullOrWhiteSpace(OldPasswordBox.Password) ||
+                    string.IsNullOrWhiteSpace(NewPasswordBox.Password) ||
                     string.IsNullOrWhiteSpace(ConfirmPasswordBox.Password))
                 {
                     MessageBox.Show("Пожалуйста, заполните все поля",
@@ -68,13 +75,23 @@ namespace BarberShop.Pages
                     return;
                 }
 
-                if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
+                // 2. Проверка старого пароля
+                if (_user.PasswordHash != OldPasswordBox.Password)
                 {
-                    MessageBox.Show("Пароли не совпадают",
+                    MessageBox.Show("Неверный старый пароль",
                         "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
+                // 3. Проверка совпадения нового пароля и подтверждения
+                if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
+                {
+                    MessageBox.Show("Новый пароль и подтверждение не совпадают",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 4. Проверка длины пароля
                 if (NewPasswordBox.Password.Length < 6)
                 {
                     MessageBox.Show("Пароль должен содержать не менее 6 символов",
@@ -82,10 +99,18 @@ namespace BarberShop.Pages
                     return;
                 }
 
-                // Сохраняем новый пароль
-                if (user != null)
+                // 5. Проверка, что новый пароль отличается от старого
+                if (NewPasswordBox.Password == OldPasswordBox.Password)
                 {
-                    user.PasswordHash = NewPasswordBox.Password; // В реальном проекте нужно хешировать!
+                    MessageBox.Show("Новый пароль должен отличаться от старого",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Сохраняем новый пароль
+                if (_user != null)
+                {
+                    _user.PasswordHash = NewPasswordBox.Password; // В реальном проекте нужно хешировать!
                     AppConnect.modelBd.SaveChanges();
 
                     this.DialogResult = true;

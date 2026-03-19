@@ -74,36 +74,24 @@ namespace BarberShop.Pages
                 currentClient = AppConnect.modelBd.Clients
                     .FirstOrDefault(c => c.UserID == AppConnect.currentUser.UserID);
 
-                if (currentClient != null)
+                // Заполняем данные пользователя (эти поля есть всегда)
+                ClientNameText.Text = $"{AppConnect.currentUser.LastName} {AppConnect.currentUser.FirstName}";
+                ClientPhoneText.Text = AppConnect.currentUser.Phone;
+                ClientEmailText.Text = string.IsNullOrEmpty(AppConnect.currentUser.Email) ?
+                    "Email не указан" : AppConnect.currentUser.Email;
+
+                // Форматируем дату рождения, если она есть
+                if (currentClient != null && currentClient.BirthDate.HasValue)
                 {
-                    // Заполняем данные пользователя
-                    ClientNameText.Text = $"{AppConnect.currentUser.FirstName} {AppConnect.currentUser.LastName}";
-                    ClientPhoneText.Text = AppConnect.currentUser.Phone;
-                    ClientEmailText.Text = string.IsNullOrEmpty(AppConnect.currentUser.Email) ?
-                        "Email не указан" : AppConnect.currentUser.Email;
-
-                    // Форматируем дату рождения, если она есть
-                    if (currentClient.BirthDate.HasValue)
-                    {
-                        ClientBirthDateText.Text = $"Дата рождения: {currentClient.BirthDate.Value:dd.MM.yyyy}";
-                    }
-                    else
-                    {
-                        ClientBirthDateText.Text = "Дата рождения не указана";
-                    }
-
-                    // Обновляем приветствие
-                    WelcomeTextBlock.Text = $"Добро пожаловать, {AppConnect.currentUser.FirstName}!";
+                    ClientBirthDateText.Text = $"Дата рождения: {currentClient.BirthDate.Value:dd.MM.yyyy}";
                 }
                 else
                 {
-                    // Если клиент не найден в таблице Clients (такое может быть)
-                    ClientNameText.Text = $"{AppConnect.currentUser.FirstName} {AppConnect.currentUser.LastName}";
-                    ClientPhoneText.Text = AppConnect.currentUser.Phone;
-                    ClientEmailText.Text = AppConnect.currentUser.Email ?? "Email не указан";
                     ClientBirthDateText.Text = "Дата рождения не указана";
-                    WelcomeTextBlock.Text = $"Добро пожаловать, {AppConnect.currentUser.FirstName}!";
                 }
+
+                // Обновляем приветствие
+                WelcomeTextBlock.Text = $"Добро пожаловать, {AppConnect.currentUser.FirstName}!";
             }
             catch (Exception ex)
             {
@@ -316,6 +304,31 @@ namespace BarberShop.Pages
                                    "Информация",
                                    MessageBoxButton.OK,
                                    MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // НОВЫЙ ОБРАБОТЧИК для кнопки смены пароля
+        private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (AppConnect.currentUser == null) return;
+
+                // Создаем окно смены пароля, передаем ID пользователя и флаг, что это клиент
+                // (флаг может пригодиться, если окно будет использоваться для разных ролей)
+                var changePasswordWindow = new ChangeClientPasswordWindow(AppConnect.currentUser.UserID, isClient: true);
+                changePasswordWindow.Owner = Window.GetWindow(this);
+
+                if (changePasswordWindow.ShowDialog() == true)
+                {
+                    MessageBox.Show("Пароль успешно изменен!", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
