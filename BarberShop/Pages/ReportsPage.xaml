@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:BarberShop.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       Title="ReportsPage"
@@ -99,7 +98,6 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Фоновый градиент -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#FF090909" Offset="0"/>
@@ -108,11 +106,20 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="30">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
                 <!-- Верхняя панель с логотипом, заголовком и кнопкой выхода -->
-                <Grid Margin="0 0 0 30">
+                <Grid Grid.Row="0" Margin="0 0 0 30">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -132,13 +139,15 @@
                                   FontSize="32"
                                   FontWeight="Bold"
                                   Foreground="White"
-                                  HorizontalAlignment="Center"/>
+                                  HorizontalAlignment="Center"
+                                  TextWrapping="Wrap"/>
                         <TextBlock x:Name="AdminInfoText"
                                   Text="Администратор: Загрузка..."
                                   Foreground="#CE7802"
                                   FontSize="16"
                                   HorizontalAlignment="Center"
-                                  Margin="0 5 0 0"/>
+                                  Margin="0 5 0 0"
+                                  TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <!-- Кнопка выхода -->
@@ -157,36 +166,26 @@
                 </Grid>
 
                 <!-- Выбор периода для всех отчетов -->
-                <Border Background="#FF141414" 
+                <Border Grid.Row="1" 
+                        Background="#FF141414" 
                         CornerRadius="10" 
                         Padding="20" 
                         Margin="0 0 0 30">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" 
-                                   Text="Период:" 
+                    <WrapPanel Orientation="Horizontal">
+                        <TextBlock Text="Период:" 
                                    Foreground="White" 
                                    FontSize="16" 
                                    FontWeight="Bold"
                                    VerticalAlignment="Center"
                                    Margin="0 0 20 0"/>
 
-                        <TextBlock Grid.Column="1" 
-                                   Text="С:" 
+                        <TextBlock Text="С:" 
                                    Foreground="#CCCCCC" 
                                    FontSize="14"
                                    VerticalAlignment="Center"
                                    Margin="0 0 10 0"/>
 
-                        <DatePicker Grid.Column="2" 
-                                    x:Name="StartDatePicker"
+                        <DatePicker x:Name="StartDatePicker"
                                     Background="#FF1E1E1E"
                                     Foreground="White"
                                     BorderBrush="#FF333333"
@@ -200,15 +199,13 @@
                             </DatePicker.Resources>
                         </DatePicker>
 
-                        <TextBlock Grid.Column="3" 
-                                   Text="По:" 
+                        <TextBlock Text="По:" 
                                    Foreground="#CCCCCC" 
                                    FontSize="14"
                                    VerticalAlignment="Center"
                                    Margin="0 0 10 0"/>
 
-                        <DatePicker Grid.Column="4" 
-                                    x:Name="EndDatePicker"
+                        <DatePicker x:Name="EndDatePicker"
                                     Background="#FF1E1E1E"
                                     Foreground="White"
                                     BorderBrush="#FF333333"
@@ -220,11 +217,11 @@
                                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
                             </DatePicker.Resources>
                         </DatePicker>
-                    </Grid>
+                    </WrapPanel>
                 </Border>
 
                 <!-- Отчет 1: Выручка за период -->
-                <Border Style="{StaticResource ReportCardStyle}">
+                <Border Grid.Row="2" Style="{StaticResource ReportCardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -259,7 +256,7 @@
                         <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="250"/>
+                                    <ColumnDefinition Width="200"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
@@ -288,7 +285,7 @@
                 </Border>
 
                 <!-- Отчет 2: Выручка по услугам -->
-                <Border Style="{StaticResource ReportCardStyle}">
+                <Border Grid.Row="3" Style="{StaticResource ReportCardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -332,24 +329,26 @@
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="100"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Grid.Column="0" 
                                                            Text="{Binding ServiceName}"
                                                            Foreground="White"
                                                            FontSize="14"
-                                                           VerticalAlignment="Center"/>
+                                                           VerticalAlignment="Center"
+                                                           TextWrapping="Wrap"/>
 
                                                 <TextBlock Grid.Column="1" 
                                                            Text="{Binding AppointmentCount, StringFormat='Количество: {0}'}"
                                                            Foreground="#CCCCCC"
                                                            FontSize="14"
-                                                           VerticalAlignment="Center"/>
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Right"/>
 
                                                 <TextBlock Grid.Column="2" 
-                                                           Text="{Binding TotalRevenue, StringFormat=' {0} р '}"
+                                                           Text="{Binding TotalRevenue, StringFormat=' {0:N0} ₽'}"
                                                            Foreground="#CE7802"
                                                            FontSize="14"
                                                            FontWeight="Bold"
@@ -365,8 +364,8 @@
                         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 15 0 0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" 
@@ -380,7 +379,8 @@
                                        Text="0"
                                        Foreground="White"
                                        FontSize="16"
-                                       FontWeight="Bold"/>
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Right"/>
 
                             <TextBlock Grid.Column="2" 
                                        x:Name="TotalServicesRevenueText"
@@ -394,7 +394,7 @@
                 </Border>
 
                 <!-- Отчет 3: Общее количество записей за период -->
-                <Border Style="{StaticResource ReportCardStyle}">
+                <Border Grid.Row="4" Style="{StaticResource ReportCardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -429,7 +429,7 @@
                         <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid Margin="0 0 0 15">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="250"/>
+                                    <ColumnDefinition Width="200"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
@@ -476,7 +476,7 @@
                 </Border>
 
                 <!-- Отчет 4: Дополнительная статистика -->
-                <Border Style="{StaticResource ReportCardStyle}">
+                <Border Grid.Row="5" Style="{StaticResource ReportCardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -523,7 +523,8 @@
                                            Style="{StaticResource ReportTextStyle}"/>
                                 <TextBlock x:Name="TopServiceText" 
                                            Text="-" 
-                                           Style="{StaticResource ReportValueStyle}"/>
+                                           Style="{StaticResource ReportValueStyle}"
+                                           TextWrapping="Wrap"/>
                                 <TextBlock x:Name="TopServiceCountText" 
                                            Text="0 записей" 
                                            Foreground="#CCCCCC"
@@ -534,7 +535,8 @@
                                            Style="{StaticResource ReportTextStyle}"/>
                                 <TextBlock x:Name="TopClientText" 
                                            Text="-" 
-                                           Style="{StaticResource ReportValueStyle}"/>
+                                           Style="{StaticResource ReportValueStyle}"
+                                           TextWrapping="Wrap"/>
                                 <TextBlock x:Name="TopClientCountText" 
                                            Text="0 записей" 
                                            Foreground="#CCCCCC"
@@ -545,15 +547,17 @@
                 </Border>
 
                 <!-- Нижний колонтитул -->
-                <Border Background="#FF1E1E1E" 
+                <Border Grid.Row="6" 
+                        Background="#FF1E1E1E" 
                         CornerRadius="10" 
                         Padding="20" 
                         Margin="0 30 0 0">
                     <TextBlock Text="© 2026 BARBERSHOP «ПОДДУБНЫЙ». Все права защищены." 
                                Foreground="#666666" 
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Border>
-            </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>

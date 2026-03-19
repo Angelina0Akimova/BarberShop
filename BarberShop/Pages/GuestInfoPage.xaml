@@ -6,11 +6,8 @@
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       Title="GuestInfoPage"
-      Background="#FF090909"
-      ScrollViewer.VerticalScrollBarVisibility="Auto"
-      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+      Background="#FF090909">
 
-    <!-- Добавляем ресурсы для стилей -->
     <Page.Resources>
         <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="36"/>
@@ -33,9 +30,8 @@
         </Style>
     </Page.Resources>
 
-    <ScrollViewer>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid>
-            <!-- Фоновый градиент -->
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#FF090909" Offset="0"/>
@@ -52,23 +48,25 @@
                         <ImageBrush ImageSource="/Iamges/images.jpg" Opacity="0.3" Stretch="UniformToFill"/>
                     </Grid.Background>
 
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
                         <!-- Логотип -->
                         <Image Source="/Iamges/logo.png" Height="150" Width="150" Margin="0 0 0 20" 
                                HorizontalAlignment="Center"/>
 
-                        <!-- Название - убираем LetterSpacing -->
+                        <!-- Название -->
                         <TextBlock Text="ПОДДУБНЫЙ" 
                                    FontSize="48" 
                                    FontWeight="Bold" 
                                    Foreground="White"
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="Wrap"/>
 
                         <TextBlock Text="BARBERSHOP" 
                                    FontSize="24" 
                                    Foreground="#CE7802" 
                                    HorizontalAlignment="Center" 
-                                   Margin="0 10 0 0"/>
+                                   Margin="0 10 0 0"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <!-- Кнопка назад -->
@@ -157,7 +155,8 @@
                                                Text="Классическая стрижка" 
                                                Foreground="White" 
                                                FontSize="18" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"/>
 
                                     <!-- Цена -->
                                     <TextBlock Grid.Column="2" 
@@ -189,7 +188,8 @@
                                                Text="Стрижка под насадку" 
                                                Foreground="White" 
                                                FontSize="18" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"/>
 
                                     <!-- Цена -->
                                     <TextBlock Grid.Column="2" 
@@ -221,7 +221,8 @@
                                                Text="Королевское бритьё" 
                                                Foreground="White" 
                                                FontSize="18" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"/>
 
                                     <!-- Цена -->
                                     <TextBlock Grid.Column="2" 
@@ -253,7 +254,8 @@
                                                Text="Бритьё головы" 
                                                Foreground="White" 
                                                FontSize="18" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"/>
 
                                     <!-- Цена -->
                                     <TextBlock Grid.Column="2" 
@@ -285,7 +287,8 @@
                                                Text="Детская стрижка" 
                                                Foreground="White" 
                                                FontSize="18" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"/>
 
                                     <!-- Цена -->
                                     <TextBlock Grid.Column="2" 
@@ -317,7 +320,8 @@
                                                Text="Коррекция бороды" 
                                                Foreground="White" 
                                                FontSize="18" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"/>
 
                                     <!-- Цена -->
                                     <TextBlock Grid.Column="2" 
@@ -370,7 +374,8 @@
                                         <TextBlock Grid.Row="0" Grid.Column="1" 
                                                    Text="Профессиональные мастера" 
                                                    Foreground="White" 
-                                                   Margin="0 0 0 10"/>
+                                                   Margin="0 0 0 10"
+                                                   TextWrapping="Wrap"/>
 
                                         <!-- Преимущество 2 -->
                                         <Image Grid.Row="1" Grid.Column="0" 
@@ -380,7 +385,8 @@
                                         <TextBlock Grid.Row="1" Grid.Column="1" 
                                                    Text="Премиальная косметика" 
                                                    Foreground="White" 
-                                                   Margin="0 0 0 10"/>
+                                                   Margin="0 0 0 10"
+                                                   TextWrapping="Wrap"/>
 
                                         <!-- Преимущество 3 -->
                                         <Image Grid.Row="2" Grid.Column="0" 
@@ -389,7 +395,8 @@
                                                Margin="0 0 10 0"/>
                                         <TextBlock Grid.Row="2" Grid.Column="1" 
                                                    Text="Уютная атмосфера" 
-                                                   Foreground="White"/>
+                                                   Foreground="White"
+                                                   TextWrapping="Wrap"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -427,7 +434,8 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Старо-Петергофский пр. 37" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(812)903-37-43" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
@@ -448,12 +456,14 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Петергофское шоссе, 51" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(812)903-83-21" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
                                     <TextBlock Text="ТРК &quot;Жемчужная Плаза&quot;" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Колонка 3 -->
@@ -469,7 +479,8 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Академика Павлова, 7" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(812)907-11-37" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
@@ -490,12 +501,14 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="пр-т Героев 31" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(812) 999-82-29" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
                                     <TextBlock Text="ЖК &quot;Legenda на Героев&quot;" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
 
@@ -521,7 +534,8 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Новгородский пр., 6" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(931)276-47-15" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
@@ -542,7 +556,8 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Парашютная улица, 61к1" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(931)303-08-39" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
@@ -563,7 +578,8 @@
                                                    VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="наб. реки Карповки 31 к.1" 
-                                               Style="{StaticResource ContactTextStyle}"/>
+                                               Style="{StaticResource ContactTextStyle}"
+                                               TextWrapping="Wrap"/>
                                     <TextBlock Text="8(812)905-75-76" 
                                                Style="{StaticResource ContactTextStyle}"
                                                Foreground="#CE7802"/>
@@ -585,7 +601,8 @@
                             Margin="0 0 0 30">
                         <TextBlock Text="© 2026 BARBERSHOP «ПОДДУБНЫЙ». Все права защищены." 
                                    Foreground="#666666" 
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="Wrap"/>
                     </Border>
                 </StackPanel>
             </StackPanel>

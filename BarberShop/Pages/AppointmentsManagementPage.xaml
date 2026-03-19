@@ -50,11 +50,20 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="30">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
                 <!-- Верхняя панель с логотипом, заголовком и кнопкой назад -->
-                <Grid Margin="0 0 0 30">
+                <Grid Grid.Row="0" Margin="0 0 0 30">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -74,13 +83,15 @@
                                   FontSize="28"
                                   FontWeight="Bold"
                                   Foreground="White"
-                                  HorizontalAlignment="Center"/>
+                                  HorizontalAlignment="Center"
+                                  TextWrapping="Wrap"/>
                         <TextBlock x:Name="AdminInfoText"
                                   Text="Администратор: Загрузка..."
                                   Foreground="#CE7802"
                                   FontSize="14"
                                   HorizontalAlignment="Center"
-                                  Margin="0 5 0 0"/>
+                                  Margin="0 5 0 0"
+                                  TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <!-- Кнопка назад -->
@@ -99,14 +110,15 @@
                 </Grid>
 
                 <!-- Панель с кнопкой добавления -->
-                <Border Background="#FF141414" 
+                <Border Grid.Row="1" 
+                        Background="#FF141414" 
                         CornerRadius="10" 
                         Padding="20" 
-                        Margin="0 0 0 30"
-                        HorizontalAlignment="Right">
+                        Margin="0 0 0 30">
                     <Button x:Name="AddAppointmentButton"
                             Style="{StaticResource ActionButtonStyle}"
                             Width="200"
+                            HorizontalAlignment="Right"
                             Click="AddAppointmentButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="➕" FontSize="16" Margin="0 0 10 0"/>
@@ -116,15 +128,16 @@
                 </Border>
 
                 <!-- Секция: Сегодняшние записи -->
-                <TextBlock Text="📅 ЗАПИСИ НА СЕГОДНЯ" 
+                <TextBlock Grid.Row="2" Text="📅 ЗАПИСИ НА СЕГОДНЯ" 
                           Style="{StaticResource SectionTitleStyle}"/>
 
-                <ItemsControl x:Name="TodayAppointmentsList">
+                <ItemsControl Grid.Row="3" x:Name="TodayAppointmentsList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Style="{StaticResource AppointmentCardStyle}">
                                 <Grid>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
@@ -134,9 +147,9 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Информация о записи -->
-                                    <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 10">
                                         <!-- Клиент и телефон -->
-                                        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                                        <WrapPanel Margin="0 0 0 10">
                                             <TextBlock Text="👤 " Foreground="#CE7802" FontSize="16"/>
                                             <TextBlock Text="{Binding ClientName}" 
                                                       FontSize="18" 
@@ -147,7 +160,7 @@
                                             <TextBlock Text="{Binding ClientPhone}" 
                                                       Foreground="#CCCCCC" 
                                                       FontSize="16"/>
-                                        </StackPanel>
+                                        </WrapPanel>
 
                                         <!-- Детали записи -->
                                         <WrapPanel Margin="0 0 0 10">
@@ -166,7 +179,7 @@
                                                     Padding="10 5"
                                                     Margin="0 0 10 5">
                                                 <TextBlock>
-                                                    <Run Text="👨‍💼 " Foreground="#CE7802"/>
+                                                    <Run Text="👨💼 " Foreground="#CE7802"/>
                                                     <Run Text="{Binding EmployeeName}" Foreground="White"/>
                                                 </TextBlock>
                                             </Border>
@@ -193,41 +206,41 @@
                                     </StackPanel>
 
                                     <!-- Кнопки действий -->
-                                    <!-- Кнопки действий -->
-                                    <StackPanel Grid.Row="0" Grid.Column="1" 
-            Orientation="Horizontal"
-            VerticalAlignment="Top">
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                Margin="0 0 0 10">
                                         <Button x:Name="EditButton"
-            Width="40"
-            Height="40"
-            Background="Transparent"
-            BorderBrush="#CE7802"
-            BorderThickness="2"
-            Foreground="#CE7802"
-            FontSize="16"
-            Cursor="Hand"
-            Margin="0 0 5 0"
-            Tag="{Binding AppointmentID}"
-            Click="EditButton_Click">
+                                                Width="40"
+                                                Height="40"
+                                                Background="Transparent"
+                                                BorderBrush="#CE7802"
+                                                BorderThickness="2"
+                                                Foreground="#CE7802"
+                                                FontSize="16"
+                                                Cursor="Hand"
+                                                Margin="0 0 5 0"
+                                                Tag="{Binding AppointmentID}"
+                                                Click="EditButton_Click">
                                             <TextBlock Text="✏️" FontFamily="Segoe UI Emoji"/>
                                         </Button>
                                         <Button x:Name="DeleteButton"
-            Width="40"
-            Height="40"
-            Background="Transparent"
-            BorderBrush="#FF4444"
-            BorderThickness="2"
-            Foreground="#FF4444"
-            FontSize="16"
-            Cursor="Hand"
-            Tag="{Binding AppointmentID}"
-            Click="DeleteButton_Click">
+                                                Width="40"
+                                                Height="40"
+                                                Background="Transparent"
+                                                BorderBrush="#FF4444"
+                                                BorderThickness="2"
+                                                Foreground="#FF4444"
+                                                FontSize="16"
+                                                Cursor="Hand"
+                                                Tag="{Binding AppointmentID}"
+                                                Click="DeleteButton_Click">
                                             <TextBlock Text="🗑️" FontFamily="Segoe UI Emoji"/>
                                         </Button>
                                     </StackPanel>
 
-                                    <!-- Статус (внизу) -->
-                                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                    <!-- Статус -->
+                                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                             Background="{Binding StatusColor}"
                                             CornerRadius="5"
                                             Padding="10 5"
@@ -245,7 +258,7 @@
                 </ItemsControl>
 
                 <!-- Сообщение, если нет сегодняшних записей -->
-                <TextBlock x:Name="NoTodayAppointmentsText"
+                <TextBlock Grid.Row="4" x:Name="NoTodayAppointmentsText"
                            Text="Нет записей на сегодня"
                            Foreground="#666666"
                            FontSize="16"
@@ -254,15 +267,16 @@
                            Visibility="Collapsed"/>
 
                 <!-- Секция: Предстоящие записи -->
-                <TextBlock Text="📅 ПРЕДСТОЯЩИЕ ЗАПИСИ" 
+                <TextBlock Grid.Row="5" Text="📅 ПРЕДСТОЯЩИЕ ЗАПИСИ" 
                           Style="{StaticResource SectionTitleStyle}"/>
 
-                <ItemsControl x:Name="UpcomingAppointmentsList">
+                <ItemsControl Grid.Row="6" x:Name="UpcomingAppointmentsList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Style="{StaticResource AppointmentCardStyle}">
                                 <Grid>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
@@ -272,9 +286,9 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Информация о записи -->
-                                    <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 0 0 10">
                                         <!-- Клиент и телефон -->
-                                        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                                        <WrapPanel Margin="0 0 0 10">
                                             <TextBlock Text="👤 " Foreground="#CE7802" FontSize="16"/>
                                             <TextBlock Text="{Binding ClientName}" 
                                                       FontSize="18" 
@@ -285,7 +299,7 @@
                                             <TextBlock Text="{Binding ClientPhone}" 
                                                       Foreground="#CCCCCC" 
                                                       FontSize="16"/>
-                                        </StackPanel>
+                                        </WrapPanel>
 
                                         <!-- Дата и детали -->
                                         <TextBlock Text="{Binding Date}" 
@@ -309,7 +323,7 @@
                                                     Padding="10 5"
                                                     Margin="0 0 10 5">
                                                 <TextBlock>
-                                                    <Run Text="👨‍💼 " Foreground="#CE7802"/>
+                                                    <Run Text="👨💼 " Foreground="#CE7802"/>
                                                     <Run Text="{Binding EmployeeName}" Foreground="White"/>
                                                 </TextBlock>
                                             </Border>
@@ -326,9 +340,10 @@
                                     </StackPanel>
 
                                     <!-- Кнопки действий -->
-                                    <StackPanel Grid.Row="0" Grid.Column="1" 
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                                 Orientation="Horizontal"
-                                                VerticalAlignment="Top">
+                                                HorizontalAlignment="Right"
+                                                Margin="0 0 0 10">
                                         <Button Width="40"
                                                 Height="40"
                                                 Background="Transparent"
@@ -338,7 +353,7 @@
                                                 FontSize="16"
                                                 Cursor="Hand"
                                                 Margin="0 0 5 0"
-                                                Tag="{Binding AppointmentId}"
+                                                Tag="{Binding AppointmentID}"
                                                 Click="EditButton_Click">
                                             <TextBlock Text="✏️"/>
                                         </Button>
@@ -350,14 +365,14 @@
                                                 Foreground="#FF4444"
                                                 FontSize="16"
                                                 Cursor="Hand"
-                                                Tag="{Binding AppointmentId}"
+                                                Tag="{Binding AppointmentID}"
                                                 Click="DeleteButton_Click">
                                             <TextBlock Text="🗑️"/>
                                         </Button>
                                     </StackPanel>
 
-                                    <!-- Статус (внизу) -->
-                                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                    <!-- Статус -->
+                                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                             Background="{Binding StatusColor}"
                                             CornerRadius="5"
                                             Padding="10 5"
@@ -375,7 +390,7 @@
                 </ItemsControl>
 
                 <!-- Сообщение, если нет предстоящих записей -->
-                <TextBlock x:Name="NoUpcomingAppointmentsText"
+                <TextBlock Grid.Row="7" x:Name="NoUpcomingAppointmentsText"
                            Text="Нет предстоящих записей"
                            Foreground="#666666"
                            FontSize="16"
@@ -384,10 +399,10 @@
                            Visibility="Collapsed"/>
 
                 <!-- Секция: Прошедшие записи -->
-                <TextBlock Text="📅 ПРОШЕДШИЕ ЗАПИСИ" 
+                <TextBlock Grid.Row="8" Text="📅 ПРОШЕДШИЕ ЗАПИСИ" 
                           Style="{StaticResource SectionTitleStyle}"/>
 
-                <ItemsControl x:Name="PastAppointmentsList">
+                <ItemsControl Grid.Row="9" x:Name="PastAppointmentsList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Style="{StaticResource AppointmentCardStyle}" Opacity="0.7">
@@ -396,22 +411,18 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
 
                                     <!-- Информация о записи -->
-                                    <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <StackPanel Grid.Row="0">
                                         <!-- Клиент и телефон -->
-                                        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                                        <WrapPanel Margin="0 0 0 10">
                                             <TextBlock Text="👤 " Foreground="#CE7802" FontSize="16"/>
                                             <TextBlock Text="{Binding ClientName}" 
                                                       FontSize="18" 
                                                       FontWeight="Bold" 
                                                       Foreground="White"
                                                       Margin="0 0 10 0"/>
-                                        </StackPanel>
+                                        </WrapPanel>
 
                                         <!-- Дата и детали -->
                                         <TextBlock Text="{Binding Date}" 
@@ -435,9 +446,9 @@
                                         </WrapPanel>
                                     </StackPanel>
 
-                                    <!-- Статус (внизу) -->
-                                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                            Background="#666666"
+                                    <!-- Статус -->
+                                    <Border Grid.Row="1"
+                                            Background="{Binding StatusColor}"
                                             CornerRadius="5"
                                             Padding="10 5"
                                             Margin="0 10 0 0"
@@ -454,7 +465,7 @@
                 </ItemsControl>
 
                 <!-- Сообщение, если нет прошедших записей -->
-                <TextBlock x:Name="NoPastAppointmentsText"
+                <TextBlock Grid.Row="10" x:Name="NoPastAppointmentsText"
                            Text="Нет прошедших записей"
                            Foreground="#666666"
                            FontSize="16"
@@ -463,15 +474,17 @@
                            Visibility="Collapsed"/>
 
                 <!-- Нижний колонтитул -->
-                <Border Background="#FF1E1E1E" 
+                <Border Grid.Row="11" 
+                        Background="#FF1E1E1E" 
                         CornerRadius="10" 
                         Padding="20" 
                         Margin="0 30 0 0">
                     <TextBlock Text="© 2026 BARBERSHOP «ПОДДУБНЫЙ». Все права защищены." 
                                Foreground="#666666" 
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Border>
-            </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>

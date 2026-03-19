@@ -39,7 +39,7 @@
             <Setter Property="Margin" Value="2"/>
         </Style>
 
-        <!-- Стиль для основной кнопки действия (Добавить запись) -->
+        <!-- Стиль для основной кнопки действия -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="45"/>
             <Setter Property="Background" Value="#CE7802"/>
@@ -87,7 +87,7 @@
         </Style>
     </Page.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid>
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -122,14 +122,14 @@
                                FontWeight="Bold"
                                Foreground="White"
                                VerticalAlignment="Center"
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
 
                     <!-- Кнопки справа -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <WrapPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                         <!-- Кнопка добавления записи -->
                         <Button x:Name="AddAppointmentButton"
                                 Style="{StaticResource ActionButtonStyle}"
-                                Width="216"
                                 Margin="0 0 15 0"
                                 Click="AddAppointmentButton_Click">
                             <StackPanel Orientation="Horizontal">
@@ -150,7 +150,7 @@
                                 Padding="20 10"
                                 Cursor="Hand"
                                 Click="LogoutButton_Click"/>
-                    </StackPanel>
+                    </WrapPanel>
                 </Grid>
 
                 <!-- Секция с данными мастера -->
@@ -161,7 +161,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Аватарка (заглушка) -->
+                        <!-- Аватарка -->
                         <Border Grid.Column="0"
                                 Background="#CE7802"
                                 Width="80"
@@ -180,7 +180,8 @@
                                        Text="Иванов Иван"
                                        FontSize="24"
                                        FontWeight="Bold"
-                                       Foreground="White"/>
+                                       Foreground="White"
+                                       TextWrapping="Wrap"/>
                             <WrapPanel Margin="0 5 0 0">
                                 <TextBlock Text="📞 " Foreground="#CE7802"/>
                                 <TextBlock x:Name="MasterPhoneText"
@@ -222,20 +223,20 @@
                                    Margin="0 0 0 15"/>
 
                         <!-- Выбор периода -->
-                        <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
+                        <WrapPanel Orientation="Horizontal" Margin="0 0 0 20">
                             <RadioButton x:Name="PeriodWeekRadio" 
                                          Content="Неделя" 
                                          Style="{StaticResource PeriodButtonStyle}"
                                          IsChecked="True"
                                          GroupName="PeriodGroup"
-                                         Checked="PeriodRadio_Checked" Height="28" Width="63"/>
+                                         Checked="PeriodRadio_Checked"/>
                             <RadioButton x:Name="PeriodMonthRadio" 
                                          Content="Месяц" 
                                          Style="{StaticResource PeriodButtonStyle}"
                                          Margin="10 0 0 0"
                                          GroupName="PeriodGroup"
-                                         Checked="PeriodRadio_Checked" Width="62"/>
-                        </StackPanel>
+                                         Checked="PeriodRadio_Checked"/>
+                        </WrapPanel>
 
                         <!-- Показатели статистики -->
                         <Grid>
@@ -280,16 +281,13 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
 
                                     <!-- Информация о записи -->
-                                    <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <StackPanel Grid.Row="0" Margin="0 0 0 10">
                                         <!-- Клиент и телефон -->
-                                        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                                        <WrapPanel Margin="0 0 0 10">
                                             <TextBlock Text="👤 " Foreground="#CE7802" FontSize="16"/>
                                             <TextBlock Text="{Binding ClientName}" 
                                                        FontSize="18" 
@@ -300,7 +298,7 @@
                                             <TextBlock Text="{Binding ClientPhone}" 
                                                        Foreground="#CCCCCC" 
                                                        FontSize="16"/>
-                                        </StackPanel>
+                                        </WrapPanel>
 
                                         <!-- Детали записи -->
                                         <WrapPanel Margin="0 0 0 10">
@@ -336,9 +334,7 @@
                                     </StackPanel>
 
                                     <!-- Кнопки действий -->
-                                    <StackPanel Grid.Row="0" Grid.Column="1" 
-                                                Orientation="Horizontal"
-                                                VerticalAlignment="Top">
+                                    <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 10">
                                         <Button Style="{StaticResource IconButtonStyle}"
                                                 ToolTip="Редактировать"
                                                 Tag="{Binding AppointmentID}"
@@ -351,10 +347,10 @@
                                                 Click="DeleteAppointmentButton_Click">
                                             <TextBlock Text="🗑️" FontFamily="Segoe UI Emoji"/>
                                         </Button>
-                                    </StackPanel>
+                                    </WrapPanel>
 
-                                    <!-- Статус (внизу) -->
-                                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                    <!-- Статус -->
+                                    <Border Grid.Row="2"
                                             Background="#4CAF50"
                                             CornerRadius="5"
                                             Padding="10 5"
@@ -396,13 +392,13 @@
                                     <!-- Информация о записи -->
                                     <StackPanel Grid.Row="0">
                                         <!-- Клиент -->
-                                        <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                        <WrapPanel Margin="0 0 0 5">
                                             <TextBlock Text="👤 " Foreground="#CE7802" FontSize="14"/>
                                             <TextBlock Text="{Binding ClientName}" 
                                                        FontSize="16" 
                                                        FontWeight="Bold" 
                                                        Foreground="White"/>
-                                        </StackPanel>
+                                        </WrapPanel>
 
                                         <!-- Детали -->
                                         <WrapPanel>
@@ -455,7 +451,8 @@
                         Margin="0 30 0 0">
                     <TextBlock Text="© 2026 BARBERSHOP «ПОДДУБНЫЙ». Все права защищены." 
                                Foreground="#666666" 
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Border>
             </StackPanel>
         </Grid>

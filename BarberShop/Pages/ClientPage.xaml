@@ -33,7 +33,7 @@
         </Style>
     </Page.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid>
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -68,7 +68,8 @@
                                FontWeight="Bold"
                                Foreground="White"
                                VerticalAlignment="Center"
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
 
                     <!-- Кнопка выхода справа -->
                     <Button Grid.Column="2" 
@@ -92,16 +93,20 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
-                            <!-- Добавлена колонка для кнопки -->
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <!-- Аватарка (заглушка) -->
-                        <Border Grid.Column="0"
+                        <!-- Аватарка -->
+                        <Border Grid.Row="0" Grid.Column="0"
                                 Background="#CE7802"
                                 Width="80"
                                 Height="80"
                                 CornerRadius="40"
-                                Margin="0 0 20 0">
+                                Margin="0 0 20 0"
+                                VerticalAlignment="Top">
                             <TextBlock Text="👤"
                                        FontSize="40"
                                        HorizontalAlignment="Center"
@@ -109,12 +114,13 @@
                         </Border>
 
                         <!-- Информация о клиенте -->
-                        <StackPanel Grid.Column="1">
+                        <StackPanel Grid.Row="0" Grid.Column="1">
                             <TextBlock x:Name="ClientNameText"
                                        Text="Иванов Иван"
                                        FontSize="24"
                                        FontWeight="Bold"
-                                       Foreground="White"/>
+                                       Foreground="White"
+                                       TextWrapping="Wrap"/>
                             <TextBlock x:Name="ClientPhoneText"
                                        Text="+7 (999) 123-45-67"
                                        FontSize="16"
@@ -132,7 +138,7 @@
                         </StackPanel>
 
                         <!-- Кнопка смены пароля -->
-                        <Button Grid.Column="2"
+                        <Button Grid.Row="0" Grid.Column="2"
                                 x:Name="ChangePasswordButton"
                                 Content="🔑 Сменить пароль"
                                 Background="Transparent"
@@ -143,7 +149,7 @@
                                 FontWeight="Bold"
                                 Padding="15 8"
                                 Cursor="Hand"
-                                VerticalAlignment="Center"
+                                VerticalAlignment="Top"
                                 Click="ChangePasswordButton_Click"/>
                     </Grid>
                 </Border>
@@ -166,14 +172,19 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
                                     <!-- Иконка -->
-                                    <Border Grid.Column="0"
+                                    <Border Grid.Row="0" Grid.Column="0"
                                             Background="#CE7802"
                                             Width="50"
                                             Height="50"
                                             CornerRadius="25"
-                                            Margin="0 0 15 0">
+                                            Margin="0 0 15 0"
+                                            VerticalAlignment="Top">
                                         <TextBlock Text="💈"
                                                    FontSize="24"
                                                    HorizontalAlignment="Center"
@@ -181,31 +192,33 @@
                                     </Border>
 
                                     <!-- Информация о записи -->
-                                    <StackPanel Grid.Column="1">
+                                    <StackPanel Grid.Row="0" Grid.Column="1">
                                         <TextBlock Text="{Binding ServiceName}"
                                                    FontSize="18"
                                                    FontWeight="Bold"
-                                                   Foreground="White"/>
+                                                   Foreground="White"
+                                                   TextWrapping="Wrap"/>
                                         <TextBlock Margin="0 5 0 0">
                                             <Run Text="Мастер:" Foreground="#CCCCCC"/>
                                             <Run Text="{Binding EmployeeName}" Foreground="White"/>
                                         </TextBlock>
-                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                        <WrapPanel Margin="0 5 0 0">
                                             <TextBlock Text="📅" Foreground="#CE7802" Margin="0 0 5 0"/>
                                             <TextBlock Text="{Binding AppointmentDate}" 
                                                        Foreground="White"
                                                        Margin="0 0 15 0"/>
                                             <TextBlock Text="⏰" Foreground="#CE7802" Margin="0 0 5 0"/>
                                             <TextBlock Text="{Binding StartTime}" Foreground="White"/>
-                                        </StackPanel>
+                                        </WrapPanel>
                                     </StackPanel>
 
                                     <!-- Статус -->
-                                    <Border Grid.Column="2"
+                                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                                             Background="#4CAF50"
                                             CornerRadius="5"
                                             Padding="10 5"
-                                            VerticalAlignment="Center">
+                                            Margin="0 10 0 0"
+                                            HorizontalAlignment="Left">
                                         <TextBlock Text="{Binding Status}"
                                                    Foreground="White"
                                                    FontWeight="Bold"/>
@@ -223,7 +236,8 @@
                            FontSize="18"
                            HorizontalAlignment="Center"
                            Margin="0 20"
-                           Visibility="Collapsed"/>
+                           Visibility="Collapsed"
+                           TextWrapping="Wrap"/>
 
                 <!-- Прошедшие записи -->
                 <TextBlock Text="История посещений" Style="{StaticResource SectionTitleStyle}"/>
@@ -243,14 +257,19 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
                                     <!-- Иконка -->
-                                    <Border Grid.Column="0"
+                                    <Border Grid.Row="0" Grid.Column="0"
                                             Background="#666666"
                                             Width="50"
                                             Height="50"
                                             CornerRadius="25"
-                                            Margin="0 0 15 0">
+                                            Margin="0 0 15 0"
+                                            VerticalAlignment="Top">
                                         <TextBlock Text="✓"
                                                    FontSize="24"
                                                    HorizontalAlignment="Center"
@@ -259,28 +278,28 @@
                                     </Border>
 
                                     <!-- Информация о записи -->
-                                    <StackPanel Grid.Column="1">
+                                    <StackPanel Grid.Row="0" Grid.Column="1">
                                         <TextBlock Text="{Binding ServiceName}"
                                                    FontSize="18"
                                                    FontWeight="Bold"
-                                                   Foreground="White"/>
+                                                   Foreground="White"
+                                                   TextWrapping="Wrap"/>
                                         <TextBlock Margin="0 5 0 0">
                                             <Run Text="Мастер:" Foreground="#CCCCCC"/>
                                             <Run Text="{Binding EmployeeName}" Foreground="White"/>
                                         </TextBlock>
-                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                        <WrapPanel Margin="0 5 0 0">
                                             <TextBlock Text="📅" Foreground="#CE7802" Margin="0 0 5 0"/>
                                             <TextBlock Text="{Binding AppointmentDate}" 
                                                        Foreground="White"/>
-                                        </StackPanel>
+                                        </WrapPanel>
                                     </StackPanel>
 
                                     <!-- Статус -->
-                                    <TextBlock Grid.Column="2"
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                                                Text="{Binding Status}"
                                                Foreground="#666666"
-                                               VerticalAlignment="Center"
-                                               Margin="10"/>
+                                               Margin="0 10 0 0"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -291,7 +310,7 @@
                 <TextBlock Text="Товары для ухода" Style="{StaticResource SectionTitleStyle}"/>
 
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                    <StackPanel Orientation="Horizontal" x:Name="ProductsPanel"/>
+                    <StackPanel Orientation="Horizontal" x:Name="ProductsPanel" Margin="0 0 20 0"/>
                 </ScrollViewer>
 
                 <!-- Сообщение, если нет товаров -->
@@ -301,7 +320,8 @@
                            FontSize="18"
                            HorizontalAlignment="Center"
                            Margin="0 20"
-                           Visibility="Collapsed"/>
+                           Visibility="Collapsed"
+                           TextWrapping="Wrap"/>
 
                 <!-- Нижний колонтитул -->
                 <Border Background="#FF1E1E1E" 
@@ -310,7 +330,8 @@
                         Margin="0 30 0 0">
                     <TextBlock Text="© 2026 BARBERSHOP «ПОДДУБНЫЙ». Все права защищены." 
                                Foreground="#666666" 
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Border>
             </StackPanel>
         </Grid>
