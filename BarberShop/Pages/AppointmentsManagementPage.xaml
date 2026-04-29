@@ -54,12 +54,29 @@
             <Grid Margin="30">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <!-- 0: Верхняя панель -->
                     <RowDefinition Height="Auto"/>
+                    <!-- 1: Панель с кнопкой добавления -->
                     <RowDefinition Height="Auto"/>
+                    <!-- 2: Заголовок "Сегодня" -->
                     <RowDefinition Height="Auto"/>
+                    <!-- 3: Список сегодняшних записей -->
                     <RowDefinition Height="Auto"/>
+                    <!-- 4: Сообщение "нет записей" сегодня -->
                     <RowDefinition Height="Auto"/>
+                    <!-- 5: Заголовок "Предстоящие" -->
                     <RowDefinition Height="Auto"/>
+                    <!-- 6: Список предстоящих записей -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 7: Сообщение "нет записей" предстоящие -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 8: Заголовок "Прошедшие" -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 9: Список прошедших записей -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 10: Сообщение "нет записей" прошедшие -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 11: Нижний колонтитул -->
                 </Grid.RowDefinitions>
 
                 <!-- Верхняя панель с логотипом, заголовком и кнопкой назад -->
