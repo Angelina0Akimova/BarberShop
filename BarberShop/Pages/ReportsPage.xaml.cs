@@ -32,6 +32,34 @@ namespace BarberShop.Pages
 
         private List<ServiceRevenue> servicesRevenue = new List<ServiceRevenue>();
 
+        private Font CreatePdfFont(string fontFileName, float size, int style = iTextSharp.text.Font.NORMAL, BaseColor color = null)
+        {
+            string fontsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
+            string fontPath = Path.Combine(fontsDirectory, fontFileName);
+
+            if (File.Exists(fontPath))
+            {
+                BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                return new Font(baseFont, size, style, color ?? BaseColor.BLACK);
+            }
+
+            string fallbackFontName = style == iTextSharp.text.Font.BOLD
+                ? FontFactory.HELVETICA_BOLD
+                : FontFactory.HELVETICA;
+
+            return FontFactory.GetFont(fallbackFontName, BaseFont.CP1250, BaseFont.EMBEDDED, size, style, color ?? BaseColor.BLACK);
+        }
+
+        private Font CreateRegularPdfFont(float size, BaseColor color = null)
+        {
+            return CreatePdfFont("arial.ttf", size, iTextSharp.text.Font.NORMAL, color);
+        }
+
+        private Font CreateBoldPdfFont(float size, BaseColor color = null)
+        {
+            return CreatePdfFont("arialbd.ttf", size, iTextSharp.text.Font.BOLD, color);
+        }
+
         public ReportsPage()
         {
             InitializeComponent();
@@ -335,14 +363,14 @@ namespace BarberShop.Pages
                     document.Open();
 
                     // Заголовок
-                    Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
+                    Font titleFont = CreateBoldPdfFont(18);
                     Paragraph title = new Paragraph("Отчет о выручке за период", titleFont);
                     title.Alignment = Element.ALIGN_CENTER;
                     title.SpacingAfter = 20f;
                     document.Add(title);
 
                     // Период
-                    Font normalFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                    Font normalFont = CreateRegularPdfFont(12);
                     Paragraph period = new Paragraph(
                         $"Период: {StartDatePicker.SelectedDate.Value:dd.MM.yyyy} - {EndDatePicker.SelectedDate.Value:dd.MM.yyyy}",
                         normalFont);
@@ -355,7 +383,7 @@ namespace BarberShop.Pages
                     table.SetWidths(new float[] { 60f, 40f });
 
                     // Заголовки таблицы
-                    Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                    Font headerFont = CreateBoldPdfFont(12);
                     BaseColor headerColor = new BaseColor(206, 120, 2);
 
                     PdfPCell cell1 = new PdfPCell(new Phrase("Показатель", headerFont));
@@ -382,7 +410,7 @@ namespace BarberShop.Pages
                     // Дата создания
                     Paragraph footer = new Paragraph(
                         $"\n\nОтчет сгенерирован: {DateTime.Now:dd.MM.yyyy HH:mm:ss}",
-                        FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.GRAY));
+                        CreateRegularPdfFont(10, BaseColor.GRAY));
                     footer.Alignment = Element.ALIGN_RIGHT;
                     document.Add(footer);
 
@@ -452,14 +480,14 @@ namespace BarberShop.Pages
                     document.Open();
 
                     // Заголовок
-                    Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
+                    Font titleFont = CreateBoldPdfFont(18);
                     Paragraph title = new Paragraph("Отчет о выручке по услугам", titleFont);
                     title.Alignment = Element.ALIGN_CENTER;
                     title.SpacingAfter = 20f;
                     document.Add(title);
 
                     // Период
-                    Font normalFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                    Font normalFont = CreateRegularPdfFont(12);
                     Paragraph period = new Paragraph(
                         $"Период: {StartDatePicker.SelectedDate.Value:dd.MM.yyyy} - {EndDatePicker.SelectedDate.Value:dd.MM.yyyy}",
                         normalFont);
@@ -472,7 +500,7 @@ namespace BarberShop.Pages
                     table.SetWidths(new float[] { 50f, 25f, 25f });
 
                     // Заголовки таблицы
-                    Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                    Font headerFont = CreateBoldPdfFont(12);
                     BaseColor headerColor = new BaseColor(206, 120, 2);
 
                     PdfPCell cell1 = new PdfPCell(new Phrase("Услуга", headerFont));
@@ -518,7 +546,7 @@ namespace BarberShop.Pages
                         }
 
                         // Итоговая строка
-                        Font boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                        Font boldFont = CreateBoldPdfFont(12);
 
                         PdfPCell totalLabelCell = new PdfPCell(new Phrase("ИТОГО:", boldFont));
                         totalLabelCell.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -554,7 +582,7 @@ namespace BarberShop.Pages
                     // Дата создания
                     Paragraph footer = new Paragraph(
                         $"{DateTime.Now:dd.MM.yyyy HH:mm:ss}",
-                        FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.GRAY));
+                        CreateRegularPdfFont(10, BaseColor.GRAY));
                     footer.Alignment = Element.ALIGN_RIGHT;
                     footer.SpacingBefore = 20f;
                     document.Add(footer);
@@ -603,14 +631,14 @@ namespace BarberShop.Pages
                     document.Open();
 
                     // Заголовок
-                    Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
+                    Font titleFont = CreateBoldPdfFont(18);
                     Paragraph title = new Paragraph("Статистика записей за период", titleFont);
                     title.Alignment = Element.ALIGN_CENTER;
                     title.SpacingAfter = 20f;
                     document.Add(title);
 
                     // Период
-                    Font normalFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                    Font normalFont = CreateRegularPdfFont(12);
                     Paragraph period = new Paragraph(
                         $"Период: {StartDatePicker.SelectedDate.Value:dd.MM.yyyy} - {EndDatePicker.SelectedDate.Value:dd.MM.yyyy}",
                         normalFont);
@@ -623,7 +651,7 @@ namespace BarberShop.Pages
                     table.SetWidths(new float[] { 50f, 20f });
 
                     // Заголовки таблицы
-                    Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                    Font headerFont = CreateBoldPdfFont(12);
                     BaseColor headerColor = new BaseColor(206, 120, 2);
 
                     PdfPCell cell1 = new PdfPCell(new Phrase("Статус", headerFont));
@@ -653,7 +681,7 @@ namespace BarberShop.Pages
                     // Проценты
                     if (total > 0)
                     {
-                        Font boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                        Font boldFont = CreateBoldPdfFont(12);
                         Paragraph stats = new Paragraph();
                         stats.SpacingBefore = 20f;
                         stats.Add(new Chunk("\nПроцент выполнения: ", normalFont));
@@ -666,7 +694,7 @@ namespace BarberShop.Pages
                     // Дата создания
                     Paragraph footer = new Paragraph(
                         $"\n\nОтчет сгенерирован: {DateTime.Now:dd.MM.yyyy HH:mm:ss}",
-                        FontFactory.GetFont(FontFactory.HELVETICA, 10, BaseColor.GRAY));
+                        CreateRegularPdfFont(10, BaseColor.GRAY));
                     footer.Alignment = Element.ALIGN_RIGHT;
                     document.Add(footer);
 

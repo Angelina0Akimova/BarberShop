@@ -175,7 +175,6 @@ namespace BarberShop.Pages
         {
             try
             {
-                // Получаем все товары, которые есть в наличии
                 var products = AppConnect.modelBd.Products
                     .Where(p => p.Quantity > 0)
                     .Join(AppConnect.modelBd.ProductCategories,
@@ -189,21 +188,15 @@ namespace BarberShop.Pages
                             Price = p.Price,
                             Quantity = p.Quantity
                         })
-                    .Take(10) // Ограничиваем количество товаров для отображения
+                    .Take(10)
                     .ToList();
 
-                // Очищаем панель
-                ProductsPanel.Children.Clear();
+                // Привязываем список товаров к ItemsControl
+                ProductsItemsControl.ItemsSource = products;
 
+                // Показываем/скрываем сообщение
                 if (products.Any())
                 {
-                    foreach (var product in products)
-                    {
-                        // Создаем карточку товара
-                        var card = CreateProductCard(product);
-                        ProductsPanel.Children.Add(card);
-                    }
-
                     NoProductsText.Visibility = Visibility.Collapsed;
                 }
                 else
@@ -219,82 +212,17 @@ namespace BarberShop.Pages
             }
         }
 
-        private Border CreateProductCard(ProductDisplay product)
-        {
-            var border = new Border
-            {
-                Style = (Style)FindResource("ProductCardStyle"),
-                Tag = product
-            };
-
-            var stackPanel = new StackPanel();
-
-            // Название товара
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = product.ProductName,
-                FontSize = 18,
-                FontWeight = FontWeights.Bold,
-                Foreground = Brushes.White,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 0, 0, 10)
-            });
-
-            // Категория
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = product.CategoryName,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CCCCCC")),
-                Margin = new Thickness(0, 0, 0, 5)
-            });
-
-            // Цена
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = $"{product.Price:0.00} ₽",
-                FontSize = 24,
-                FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CE7802")),
-                Margin = new Thickness(0, 10, 0, 10)
-            });
-
-            // Наличие
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = $"В наличии: {product.Quantity} шт.",
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50")),
-                Margin = new Thickness(0, 0, 0, 15)
-            });
-
-            // Кнопка "Купить"
-            var buyButton = new Button
-            {
-                Content = "Купить",
-                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CE7802")),
-                BorderThickness = new Thickness(0),
-                Foreground = Brushes.White,
-                FontSize = 16,
-                FontWeight = FontWeights.Bold,
-                Height = 40,
-                Cursor = System.Windows.Input.Cursors.Hand
-            };
-
-            buyButton.Click += BuyButton_Click;
-
-            stackPanel.Children.Add(buyButton);
-            border.Child = stackPanel;
-
-            return border;
-        }
-
         private void BuyButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var button = sender as Button;
-                var border = button?.Parent as StackPanel;
-                var card = border?.Parent as Border;
-                var product = card?.Tag as ProductDisplay;
+                if (button?.Tag == null) return;
+
+                int productId = (int)button.Tag;
+
+                var product = ((IEnumerable<ProductDisplay>)ProductsItemsControl.ItemsSource)
+                    .FirstOrDefault(p => p.ProductID == productId);
 
                 if (product != null)
                 {
@@ -313,15 +241,12 @@ namespace BarberShop.Pages
             }
         }
 
-        // НОВЫЙ ОБРАБОТЧИК для кнопки смены пароля
         private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (AppConnect.currentUser == null) return;
 
-                // Создаем окно смены пароля, передаем ID пользователя и флаг, что это клиент
-                // (флаг может пригодиться, если окно будет использоваться для разных ролей)
                 var changePasswordWindow = new ChangeClientPasswordWindow(AppConnect.currentUser.UserID, isClient: true);
                 changePasswordWindow.Owner = Window.GetWindow(this);
 
@@ -342,7 +267,6 @@ namespace BarberShop.Pages
         {
             try
             {
-                // Спрашиваем подтверждение
                 var result = MessageBox.Show("Вы действительно хотите выйти?",
                     "Подтверждение",
                     MessageBoxButton.YesNo,
@@ -350,10 +274,7 @@ namespace BarberShop.Pages
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // Очищаем данные текущего пользователя
                     AppConnect.currentUser = null;
-
-                    // Переходим на страницу входа
                     AppFrame.frame.Navigate(new LoginPage());
                 }
             }
