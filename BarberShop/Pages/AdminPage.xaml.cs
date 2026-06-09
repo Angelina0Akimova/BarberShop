@@ -87,10 +87,7 @@ namespace BarberShop.Pages
                 StatusText.Text = "Активен";
 
                 // Сбрасываем состояние отображения пароля
-                _isPasswordVisible = false;
-                PasswordText.Text = "••••••••";
-                if (ShowPasswordButtonText != null)
-                    ShowPasswordButtonText.Text = "👁️";
+                
             }
             catch (Exception ex)
             {
@@ -149,6 +146,7 @@ namespace BarberShop.Pages
 
                         AppFrame.frame.Navigate(new ReportsPage());
                 }
+                
             }
             catch (Exception ex)
             {
@@ -213,14 +211,14 @@ namespace BarberShop.Pages
                 {
                     // Показываем пароль
                     PasswordText.Text = currentAdmin.PasswordHash;
-                    ShowPasswordButtonText.Text = "🔒";
+                    
                     _isPasswordVisible = true;
                 }
                 else
                 {
                     // Скрываем пароль
                     PasswordText.Text = "••••••••";
-                    ShowPasswordButtonText.Text = "👁️";
+                    
                     _isPasswordVisible = false;
                 }
             }

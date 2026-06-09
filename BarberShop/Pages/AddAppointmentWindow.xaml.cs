@@ -10,16 +10,39 @@ namespace BarberShop.Pages
 {
     public partial class AddAppointmentWindow : Window
     {
-        // Константа для длительности услуги (1 час = 60 минут)
         private const int DEFAULT_DURATION_MINUTES = 60;
+
+        public class ClientItem
+        {
+            public int ClientID { get; set; }
+            public string FullName { get; set; }
+        }
+
+        public class EmployeeItem
+        {
+            public int EmployeeID { get; set; }
+            public string FullName { get; set; }
+        }
+
+        public class ServiceItem
+        {
+            public int ServiceID { get; set; }
+            public string ServiceName { get; set; }
+            public decimal Price { get; set; }
+            public int DurationMinutes { get; set; }
+        }
+
+        public class StatusItem
+        {
+            public int StatusID { get; set; }
+            public string StatusName { get; set; }
+        }
 
         public AddAppointmentWindow()
         {
             InitializeComponent();
             LoadData();
             AppointmentDatePicker.SelectedDate = DateTime.Today;
-
-            // Устанавливаем время по умолчанию
             TimeTextBox.Text = DateTime.Now.ToString("HH:mm");
         }
 
@@ -33,74 +56,72 @@ namespace BarberShop.Pages
         {
             try
             {
-                // Загружаем клиентов (объединяем Users и Clients)
-                var clientsQuery = from client in AppConnect.modelBd.Clients
-                                   join user in AppConnect.modelBd.Users on client.UserID equals user.UserID
-                                   select new
-                                   {
-                                       client.ClientID,
-                                       user.LastName,
-                                       user.FirstName,
-                                       user.Phone
-                                   };
-
-                // Выполняем запрос к БД, затем формируем FullName в памяти
-                var clients = clientsQuery.ToList()
-                    .Select(x => new
-                    {
-                        ClientID = x.ClientID,
-                        FullName = $"{x.LastName} {x.FirstName}",
-                        Phone = x.Phone
-                    })
-                    .ToList();
-
-                ClientComboBox.ItemsSource = clients;
-                ClientComboBox.DisplayMemberPath = "FullName";
-                ClientComboBox.SelectedValuePath = "ClientID";
-
-                // Загружаем мастеров (объединяем Employees и Users)
-                var employeesQuery = from emp in AppConnect.modelBd.Employees
-                                     join user in AppConnect.modelBd.Users on emp.UserID equals user.UserID
-                                     where user.RoleID == 2 // Мастер
+                // Загружаем клиентов - сначала получаем данные из БД, потом форматируем в памяти
+                var clientsFromDb = (from client in AppConnect.modelBd.Clients
+                                     join user in AppConnect.modelBd.Users on client.UserID equals user.UserID
                                      select new
                                      {
-                                         emp.EmployeeID,
+                                         client.ClientID,
                                          user.LastName,
                                          user.FirstName
-                                     };
+                                     }).ToList(); // Выполняем запрос здесь!
 
-                // Выполняем запрос к БД, затем формируем FullName в памяти
-                var employees = employeesQuery.ToList()
-                    .Select(x => new
-                    {
-                        EmployeeID = x.EmployeeID,
-                        FullName = $"{x.LastName} {x.FirstName}"
-                    })
-                    .ToList();
+                var clients = clientsFromDb.Select(x => new ClientItem
+                {
+                    ClientID = x.ClientID,
+                    FullName = x.LastName + " " + x.FirstName // Форматируем в памяти
+                }).ToList();
+
+                ClientComboBox.ItemsSource = clients;
+
+                // Загружаем мастеров - сначала получаем данные из БД
+                var employeesFromDb = (from emp in AppConnect.modelBd.Employees
+                                       join user in AppConnect.modelBd.Users on emp.UserID equals user.UserID
+                                       where user.RoleID == 2 && user.IsActive == true
+                                       select new
+                                       {
+                                           emp.EmployeeID,
+                                           user.LastName,
+                                           user.FirstName
+                                       }).ToList(); // Выполняем запрос здесь!
+
+                var employees = employeesFromDb.Select(x => new EmployeeItem
+                {
+                    EmployeeID = x.EmployeeID,
+                    FullName = x.LastName + " " + x.FirstName // Форматируем в памяти
+                }).ToList();
 
                 EmployeeComboBox.ItemsSource = employees;
-                EmployeeComboBox.DisplayMemberPath = "FullName";
-                EmployeeComboBox.SelectedValuePath = "EmployeeID";
 
-                // Загружаем услуги
-                var services = from service in AppConnect.modelBd.Services
-                               where service.IsActive == true
-                               select new
-                               {
-                                   ServiceID = service.ServiceID,
-                                   ServiceName = service.ServiceName,
-                                   Price = service.Price,
-                                   DurationMinutes = service.DurationMinutes
-                               };
-                ServiceComboBox.ItemsSource = services.ToList();
-                ServiceComboBox.DisplayMemberPath = "ServiceName";
-                ServiceComboBox.SelectedValuePath = "ServiceID";
+                // Загружаем услуги - напрямую, без форматирования строк
+                var services = AppConnect.modelBd.Services
+                    .Where(s => s.IsActive == true)
+                    .Select(s => new ServiceItem
+                    {
+                        ServiceID = s.ServiceID,
+                        ServiceName = s.ServiceName,
+                        Price = s.Price,
+                        DurationMinutes = s.DurationMinutes
+                    }).ToList();
+
+                ServiceComboBox.ItemsSource = services;
 
                 // Загружаем статусы
-                StatusComboBox.ItemsSource = AppConnect.modelBd.AppointmentStatuses.ToList();
-                StatusComboBox.DisplayMemberPath = "StatusName";
-                StatusComboBox.SelectedValuePath = "StatusID";
-                StatusComboBox.SelectedIndex = 0; // По умолчанию первый статус
+                var statuses = AppConnect.modelBd.AppointmentStatuses
+                    .Select(s => new StatusItem
+                    {
+                        StatusID = s.StatusID,
+                        StatusName = s.StatusName
+                    }).ToList();
+
+                StatusComboBox.ItemsSource = statuses;
+
+                // Устанавливаем статус "Запланировано" (StatusID = 1)
+                var plannedStatus = statuses.FirstOrDefault(s => s.StatusID == 1);
+                if (plannedStatus != null)
+                {
+                    StatusComboBox.SelectedItem = plannedStatus;
+                }
             }
             catch (Exception ex)
             {
@@ -113,16 +134,13 @@ namespace BarberShop.Pages
         {
             try
             {
-                if (ServiceComboBox.SelectedItem != null)
+                if (ServiceComboBox.SelectedItem is ServiceItem selectedService)
                 {
-                    // Безопасное получение цены
-                    var selectedItem = ServiceComboBox.SelectedItem;
-                    var priceProperty = selectedItem.GetType().GetProperty("Price");
-                    if (priceProperty != null)
-                    {
-                        decimal price = (decimal)priceProperty.GetValue(selectedItem);
-                        PriceTextBox.Text = $"{price} ₽";
-                    }
+                    PriceTextBox.Text = $"{selectedService.Price:N0} ₽";
+                }
+                else
+                {
+                    PriceTextBox.Text = "";
                 }
             }
             catch (Exception ex)
@@ -132,24 +150,24 @@ namespace BarberShop.Pages
             }
         }
 
-        /// <summary>
-        /// Вычисляет время окончания записи на основе времени начала и длительности
-        /// </summary>
         private TimeSpan CalculateEndTime(TimeSpan startTime)
         {
-            // Добавляем 1 час (60 минут) к времени начала
-            return startTime.Add(TimeSpan.FromMinutes(DEFAULT_DURATION_MINUTES));
+            int durationMinutes = DEFAULT_DURATION_MINUTES;
+
+            if (ServiceComboBox.SelectedItem is ServiceItem selectedService && selectedService.DurationMinutes > 0)
+            {
+                durationMinutes = selectedService.DurationMinutes;
+            }
+
+            return startTime.Add(TimeSpan.FromMinutes(durationMinutes));
         }
 
-        /// <summary>
-        /// Проверяет, не пересекается ли новая запись с существующими
-        /// </summary>
         private bool IsTimeSlotAvailable(int employeeId, DateTime date, TimeSpan startTime, TimeSpan endTime)
         {
             var existingAppointments = AppConnect.modelBd.Appointments
                 .Where(a => a.EmployeeID == employeeId
                     && a.AppointmentDate == date
-                    && a.StatusID != 3) // Исключаем отмененные записи (StatusID = 3)
+                    && a.StatusID != 3)
                 .ToList();
 
             foreach (var appointment in existingAppointments)
@@ -157,46 +175,74 @@ namespace BarberShop.Pages
                 TimeSpan existingStart = appointment.StartTime;
                 TimeSpan existingEnd = appointment.EndTime;
 
-                // Проверяем пересечение временных интервалов
                 if ((startTime < existingEnd) && (endTime > existingStart))
                 {
-                    return false; // Время занято
+                    return false;
                 }
             }
 
-            return true; // Время свободно
+            return true;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
-            this.Close();
+            DialogResult = false;
+            Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
-            this.Close();
+            DialogResult = false;
+            Close();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Валидация
-                if (ClientComboBox.SelectedItem == null ||
-                    EmployeeComboBox.SelectedItem == null ||
-                    ServiceComboBox.SelectedItem == null ||
-                    AppointmentDatePicker.SelectedDate == null ||
-                    string.IsNullOrWhiteSpace(TimeTextBox.Text) ||
-                    StatusComboBox.SelectedItem == null)
+                // Проверка выбора клиента
+                if (!(ClientComboBox.SelectedItem is ClientItem selectedClient))
                 {
-                    MessageBox.Show("Пожалуйста, заполните все поля", "Ошибка",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Выберите клиента", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                // Парсим время начала
+                // Проверка выбора мастера
+                if (!(EmployeeComboBox.SelectedItem is EmployeeItem selectedEmployee))
+                {
+                    MessageBox.Show("Выберите мастера", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Проверка выбора услуги
+                if (!(ServiceComboBox.SelectedItem is ServiceItem selectedService))
+                {
+                    MessageBox.Show("Выберите услугу", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Проверка даты
+                if (AppointmentDatePicker.SelectedDate == null)
+                {
+                    MessageBox.Show("Выберите дату", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Проверка времени
+                if (string.IsNullOrWhiteSpace(TimeTextBox.Text))
+                {
+                    MessageBox.Show("Введите время", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Проверка статуса
+                if (!(StatusComboBox.SelectedItem is StatusItem selectedStatus))
+                {
+                    MessageBox.Show("Выберите статус", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Парсим время
                 if (!TimeSpan.TryParse(TimeTextBox.Text, out TimeSpan startTime))
                 {
                     MessageBox.Show("Неверный формат времени. Используйте ЧЧ:ММ", "Ошибка",
@@ -204,47 +250,45 @@ namespace BarberShop.Pages
                     return;
                 }
 
-                // Вычисляем время окончания (начало + 1 час)
                 TimeSpan endTime = CalculateEndTime(startTime);
-
-                // Получаем выбранные значения
-                int clientId = (int)ClientComboBox.SelectedValue;
-                int employeeId = (int)EmployeeComboBox.SelectedValue;
-                int serviceId = (int)ServiceComboBox.SelectedValue;
-                int statusId = (int)StatusComboBox.SelectedValue;
                 DateTime appointmentDate = AppointmentDatePicker.SelectedDate.Value;
 
-                // Проверяем, не занято ли это время у мастера
-                if (!IsTimeSlotAvailable(employeeId, appointmentDate, startTime, endTime))
+                // Проверка занятости
+                if (!IsTimeSlotAvailable(selectedEmployee.EmployeeID, appointmentDate, startTime, endTime))
                 {
-                    MessageBox.Show($"Это время уже занято у выбранного мастера. Выберите другое время.",
+                    MessageBox.Show("Это время уже занято у выбранного мастера. Выберите другое время.",
                         "Время занято", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                // Создаем новую запись
+                // Создаем запись
                 var appointment = new Appointments
                 {
-                    ClientID = clientId,
-                    EmployeeID = employeeId,
-                    ServiceID = serviceId,
-                    StatusID = statusId,
+                    ClientID = selectedClient.ClientID,
+                    EmployeeID = selectedEmployee.EmployeeID,
+                    ServiceID = selectedService.ServiceID,
+                    StatusID = selectedStatus.StatusID,
                     AppointmentDate = appointmentDate,
                     StartTime = startTime,
-                    EndTime = endTime, // Устанавливаем время окончания (+1 час)
+                    EndTime = endTime,
                     CreatedAt = DateTime.Now,
-                    Comment = null // Можно добавить поле для комментария в интерфейсе при необходимости
+                    Comment = null
                 };
 
                 AppConnect.modelBd.Appointments.Add(appointment);
                 AppConnect.modelBd.SaveChanges();
 
-                MessageBox.Show("Запись успешно добавлена!\n" +
-                    $"Время: {startTime.ToString(@"hh\:mm")} - {endTime.ToString(@"hh\:mm")} (1 час)",
+                MessageBox.Show($"Запись успешно добавлена!\n\n" +
+                    $"Клиент: {selectedClient.FullName}\n" +
+                    $"Мастер: {selectedEmployee.FullName}\n" +
+                    $"Услуга: {selectedService.ServiceName}\n" +
+                    $"Статус: {selectedStatus.StatusName}\n" +
+                    $"Дата: {appointmentDate:dd.MM.yyyy}\n" +
+                    $"Время: {startTime:hh\\:mm} - {endTime:hh\\:mm}",
                     "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                this.DialogResult = true;
-                this.Close();
+                DialogResult = true;
+                Close();
             }
             catch (Exception ex)
             {

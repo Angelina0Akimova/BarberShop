@@ -110,6 +110,7 @@
                               Foreground="#666666" 
                               FontSize="12" 
                               Margin="0 0 0 15"/>
+                    
 
                     <!-- Кнопки навигации -->
                     <Button Style="{StaticResource SidebarButtonStyle}" 
@@ -131,13 +132,12 @@
                             <TextBlock Text="Клиенты"/>
                         </StackPanel>
                     </Button>
-
                     <Button Style="{StaticResource SidebarButtonStyle}" 
                             x:Name="MastersButton"
                             Click="NavigationButton_Click"
                             Tag="Masters">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="💇♂️" FontSize="18" Margin="0 0 15 0"/>
+                            <TextBlock Text="💇" FontSize="18" Margin="0 0 15 0"/>
                             <TextBlock Text="Мастера"/>
                         </StackPanel>
                     </Button>
@@ -338,7 +338,7 @@
                                           Style="{StaticResource InfoValueStyle}"
                                           Margin="0 0 10 0"/>
 
-                                <Button Grid.Column="1" 
+                                <!--<Button Grid.Column="1" 
                                         x:Name="ShowPasswordButton"
                                         Width="30"
                                         Height="30"
@@ -351,7 +351,7 @@
                                         Click="ShowPasswordButton_Click"
                                         ToolTip="Показать/скрыть пароль">
                                     <TextBlock x:Name="ShowPasswordButtonText" Text="👁️"/>
-                                </Button>
+                                </Button>-->
                             </Grid>
 
                             <!-- Скрытое поле для хранения фактического пароля -->

@@ -25,8 +25,14 @@ namespace BarberShop.Pages
             public string StatusText { get; set; }
             public SolidColorBrush StatusColor { get; set; }
             public DateTime AppointmentDateTime { get; set; }
-            public int StatusId { get; set; } // Добавляем ID статуса для проверки
+            public int StatusId { get; set; }
         }
+
+        // Списки для хранения оригинальных данных
+        private List<AppointmentDisplay> todayAppointmentsList = new List<AppointmentDisplay>();
+        private List<AppointmentDisplay> upcomingAppointmentsList = new List<AppointmentDisplay>();
+        private List<AppointmentDisplay> pastAppointmentsList = new List<AppointmentDisplay>();
+        private string currentSortMode = "date_desc";
 
         public AppointmentsManagementPage()
         {
@@ -184,28 +190,77 @@ namespace BarberShop.Pages
                     }
                 }
 
-                // Сортируем
-                todayAppointments = todayAppointments.OrderBy(a => a.AppointmentDateTime).ToList();
-                upcomingAppointments = upcomingAppointments.OrderBy(a => a.AppointmentDateTime).ToList();
-                pastAppointments = pastAppointments.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                // Сохраняем оригинальные списки
+                todayAppointmentsList = todayAppointments;
+                upcomingAppointmentsList = upcomingAppointments;
+                pastAppointmentsList = pastAppointments;
 
-                // Отображаем
-                TodayAppointmentsList.ItemsSource = todayAppointments;
-                UpcomingAppointmentsList.ItemsSource = upcomingAppointments;
-                PastAppointmentsList.ItemsSource = pastAppointments;
+                // Применяем сортировку
+                ApplySorting();
 
                 // Показываем/скрываем сообщения
-                NoTodayAppointmentsText.Visibility = todayAppointments.Any() ? Visibility.Collapsed : Visibility.Visible;
-                NoUpcomingAppointmentsText.Visibility = upcomingAppointments.Any() ? Visibility.Collapsed : Visibility.Visible;
-                NoPastAppointmentsText.Visibility = pastAppointments.Any() ? Visibility.Collapsed : Visibility.Visible;
+                NoTodayAppointmentsText.Visibility = todayAppointmentsList.Any() ? Visibility.Collapsed : Visibility.Visible;
+                NoUpcomingAppointmentsText.Visibility = upcomingAppointmentsList.Any() ? Visibility.Collapsed : Visibility.Visible;
+                NoPastAppointmentsText.Visibility = pastAppointmentsList.Any() ? Visibility.Collapsed : Visibility.Visible;
 
                 // Отладка
-                System.Diagnostics.Debug.WriteLine($"Загружено записей: всего {appointmentsList.Count}, сегодня {todayAppointments.Count}, предстоит {upcomingAppointments.Count}, прошло {pastAppointments.Count}");
+                System.Diagnostics.Debug.WriteLine($"Загружено записей: всего {appointmentsList.Count}, сегодня {todayAppointmentsList.Count}, предстоит {upcomingAppointmentsList.Count}, прошло {pastAppointmentsList.Count}");
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки записей: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Применяет сортировку к спискам записей
+        /// </summary>
+        private void ApplySorting()
+        {
+            try
+            {
+                List<AppointmentDisplay> sortedToday = todayAppointmentsList.ToList();
+                List<AppointmentDisplay> sortedUpcoming = upcomingAppointmentsList.ToList();
+                List<AppointmentDisplay> sortedPast = pastAppointmentsList.ToList();
+
+                switch (currentSortMode)
+                {
+                    case "date_desc": // Сначала новые
+                        sortedToday = sortedToday.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                        sortedUpcoming = sortedUpcoming.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                        sortedPast = sortedPast.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                        break;
+                    case "date_asc": // Сначала старые
+                        sortedToday = sortedToday.OrderBy(a => a.AppointmentDateTime).ToList();
+                        sortedUpcoming = sortedUpcoming.OrderBy(a => a.AppointmentDateTime).ToList();
+                        sortedPast = sortedPast.OrderBy(a => a.AppointmentDateTime).ToList();
+                        break;
+                    case "client": // По клиенту (алфавиту)
+                        sortedToday = sortedToday.OrderBy(a => a.ClientName).ToList();
+                        sortedUpcoming = sortedUpcoming.OrderBy(a => a.ClientName).ToList();
+                        sortedPast = sortedPast.OrderBy(a => a.ClientName).ToList();
+                        break;
+                    case "master": // По мастеру (алфавиту)
+                        sortedToday = sortedToday.OrderBy(a => a.EmployeeName).ToList();
+                        sortedUpcoming = sortedUpcoming.OrderBy(a => a.EmployeeName).ToList();
+                        sortedPast = sortedPast.OrderBy(a => a.EmployeeName).ToList();
+                        break;
+                    default:
+                        sortedToday = sortedToday.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                        sortedUpcoming = sortedUpcoming.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                        sortedPast = sortedPast.OrderByDescending(a => a.AppointmentDateTime).ToList();
+                        break;
+                }
+
+                // Обновляем отображение
+                TodayAppointmentsList.ItemsSource = sortedToday;
+                UpcomingAppointmentsList.ItemsSource = sortedUpcoming;
+                PastAppointmentsList.ItemsSource = sortedPast;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка сортировки: {ex.Message}");
             }
         }
 
@@ -228,6 +283,34 @@ namespace BarberShop.Pages
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666666"));
             }
         }
+
+        #region Обработчики сортировки
+
+        private void SortByDateDescButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentSortMode = "date_desc";
+            ApplySorting();
+        }
+
+        private void SortByDateAscButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentSortMode = "date_asc";
+            ApplySorting();
+        }
+
+        private void SortByClientButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentSortMode = "client";
+            ApplySorting();
+        }
+
+        private void SortByMasterButton_Click(object sender, RoutedEventArgs e)
+        {
+            currentSortMode = "master";
+            ApplySorting();
+        }
+
+        #endregion
 
         private void AddAppointmentButton_Click(object sender, RoutedEventArgs e)
         {

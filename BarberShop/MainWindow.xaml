@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BarberShop"
         mc:Ignorable="d"
-        Title="BarberShop" Height="450" Width="800">
+        Title="BarberShop" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Grid>
-        <Frame x:Name="mainFrame"/>
+        <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

@@ -93,6 +93,65 @@
                            Height="60" 
                            Width="60"
                            Margin="0 0 20 0"/>
+                    <!-- Панель сортировки -->
+                    <Border Grid.Row="1" 
+        Background="#FF141414" 
+        CornerRadius="10" 
+        Padding="20" 
+        Margin="0 0 0 20">
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock Text="Сортировать:" 
+                   Foreground="#CCCCCC" 
+                   FontSize="14"
+                   VerticalAlignment="Center"
+                   Margin="0 0 10 0"/>
+
+                            <Button x:Name="SortByDateDescButton"
+                Style="{StaticResource ActionButtonStyle}"
+                Height="35"
+                Width="163"
+                Click="SortByDateDescButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📅" FontSize="14" Margin="0 0 5 0"/>
+                                    <TextBlock Text="Сначала новые" Width="114"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="SortByDateAscButton"
+                Style="{StaticResource ActionButtonStyle}"
+                Height="35"
+                Width="169"
+                Click="SortByDateAscButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📅" FontSize="14" Margin="0 0 5 0"/>
+                                    <TextBlock Text="Сначала старые"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="SortByClientButton"
+                Style="{StaticResource ActionButtonStyle}"
+                Height="35"
+                Width="140"
+                Margin="0 0 10 0"
+                Click="SortByClientButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="👤" FontSize="14" Margin="0 0 5 0"/>
+                                    <TextBlock Text="По клиенту"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="SortByMasterButton"
+                Style="{StaticResource ActionButtonStyle}"
+                Height="35"
+                Width="140"
+                Click="SortByMasterButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="💇" FontSize="14" Margin="0 0 5 0"/>
+                                    <TextBlock Text="По мастеру"/>
+                                </StackPanel>
+                            </Button>
+                        </WrapPanel>
+                    </Border>
 
                     <!-- Заголовок по центру -->
                     <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center">
